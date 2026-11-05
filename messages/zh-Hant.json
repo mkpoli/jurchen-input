@@ -122,7 +122,7 @@
   "card.origin.jin-identical": "金代碑刻中的字形與漢字「{char}」相同，明代譯語則多一筆或一點。",
   "card.origin.imitates": "明顯仿照漢字「{char}」的楷書字形。",
   "card.origin.khitan": "有研究將此字與表示「{char}」的契丹大字並列比較，兩者關係的研究仍處於初步階段。",
-  "card.origin.numeral": "清瀨義三郎則府認為，女真數字皆由漢字改造而來，此字亦然。魏安則認為，只有部分女真數字以相應的漢字數字為基礎，且無一可確定源自契丹字。",
+  "card.origin.numeral": "清瀨認為，此字與所有女真文數字一樣，都是由漢字改造而來。魏安則認為，其中一些源自相應的漢字數字，未見明確源自契丹文的例子。",
   "card.origin.none": "本站可查閱的文獻均未說明此字的來源。",
   "card.origin.cite.n5261r": "魏安、孫伯君2024",
   "card.origin.cite.kiyose": "清瀨義三郎則府",
