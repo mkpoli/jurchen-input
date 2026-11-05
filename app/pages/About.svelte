@@ -50,7 +50,7 @@
     <p class="ui-prose">{t('about.kept')}</p>
   </section>
 
-  <footer class="about-foot ui-hint">{t('about.footer')}</footer>
+  <footer class="about-foot ui-hint">{t('about.footer')} <a href="https://github.com/mkpoli/jurchen-input">github.com/mkpoli/jurchen-input</a></footer>
 </article>
 
 <style>
