@@ -3,7 +3,7 @@ import { gunzipSync } from 'node:zlib'
 import { readFileSync } from 'node:fs'
 import { fill, ix, radicalNumber } from '../app/lib/index.js'
 import { baseOf, clusters, codePoint, fromParam, lastCluster, readSource, toParam, variantOf } from '../app/lib/script.js'
-import { byCode, byCodePoint, byNumber, jurchenIn, nextLetters } from '../app/lib/search.js'
+import { byCode, byCodePoint, byNumber, byReference, jurchenIn, nextLetters } from '../app/lib/search.js'
 import { foldQuery, foldReading, searchReadings } from '../app/lib/reading.js'
 import { indexShapes, parseShapes, rankShapes, SIZE } from '../app/lib/shape.js'
 
@@ -85,6 +85,22 @@ describe('stroke codes', () => {
     expect(byNumber('12345')).toEqual([])
     expect(byCodePoint('U+18E01')).toEqual(['\u{18E01}'])
     expect(byCodePoint('U+1700')).toEqual([])
+  })
+})
+
+describe('references from before Unicode 18', () => {
+  test('every character has a record and the proposals\' links hold', () => {
+    expect(ix.encodings.size).toBe(914)
+    const tumen = ix.encodings.get('\u{18E01}')
+    expect(tumen).toEqual({ jin1984: ['002-04', '146-03', '270-02'], xrefs: ['X-0005', 'X-0668', 'X-1235'], babelstone: ['E004'], zhzk: ['F1C72', 'F1F02', 'F2134'], draft: ['18E03'] })
+  })
+  test('every form of a reference finds the character', () => {
+    for (const query of ['X-0005', 'x0005', '002-04', 'NC:002.04', 'U+E004', 'e004', 'U+F1C72']) expect(byReference(query)).toEqual(['\u{18E01}'])
+    expect(byReference('18E03')).toEqual([])
+  })
+  test('a code point that means two characters names both', () => {
+    expect(byReference('E6F4').sort()).toEqual(['\u{18F70}', '\u{1905C}'])
+    expect(ix.encodings.get('\u{18F70}')?.babelstone).toContain('E6F4(tianyige)')
   })
 })
 

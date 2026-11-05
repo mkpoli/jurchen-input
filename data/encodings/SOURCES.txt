@@ -1,0 +1,6 @@
+n5207	https://www.unicode.org/wg2/docs/n5207-Jurchen.pdf	a5a9e8273afdb4769a071644c11d58b47658208949de6a9b0a457ae499f44a88
+n5261r	https://www.unicode.org/L2/L2024/24139-n5261r-jurchen-ideographs.pdf	9ce9ddc62f1ca3c764aaaa69fcde0819385f65515eb4399448c5d9ab5c8334a8
+berlin	https://www.babelstone.co.uk/Fonts/Download/JurchenBerlin.ttf	30d133b7c283eef3ea9bcc1c99cd94ca544936405f3f95c41edd8e7409ad712b
+toyo	https://www.babelstone.co.uk/Fonts/Download/JurchenToyoBunko.ttf	74516b67cefd1b1e22b78d25b69ad21ff1bb72bb01e22c97cb3488fdf014b226
+beijing	https://www.babelstone.co.uk/Fonts/Download/JurchenBeijing.ttf	47cec7c3b284c0e600bac0e0fc400994efa481e6f9da0ff529ed3dd76dc662fc
+tianyige	https://www.babelstone.co.uk/Fonts/Download/JurchenTianyige.ttf	8b2479851cf675ace599713bea4c430ee0d757a4e844a671decf8d077b9089dd

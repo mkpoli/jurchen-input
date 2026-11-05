@@ -56,5 +56,17 @@ export function byNumber(query) {
   return value ? [value] : []
 }
 
+/**
+ * Characters by a reference from before Unicode 18: `X-0005`, a Jin 1984 entry as `002-04` or
+ * `NC:002.04`, or a private-use code point as `U+E004` or `F1C72`.
+ * @param {string} query
+ * @returns {string[]}
+ */
+export function byReference(query) {
+  const text = query.trim().toUpperCase().replace(/^U\+/, '')
+  const key = /^NC:\d+\.\d+$/.test(text) ? text.slice(3).replace('.', '-') : /^X-?\d{4}$/.test(text) ? `X-${text.slice(-4)}` : text
+  return ix.references.get(key) ?? []
+}
+
 /** The characters in a piece of text, each once, in order. @param {string} text */
 export const jurchenIn = text => [...new Set(clusters(text))]

@@ -13,6 +13,10 @@ Retrieved 2026-11-05 unless noted.
 | Alari (Sulfa & Ayasala), 「没人给女真文做字体和输入法？那我们自己来」, [WeChat article](https://mp.weixin.qq.com/s/YaUP6bq4xt_18ywlRxCQpA), read from a copy of its text, since the page refuses automated fetches; its date was not seen | the stroke definitions on the Strokes page, the account of how the font and variants were made | cited | `app/pages/Strokes.svelte` |
 | 柳突破, 「Alari 仿宋女真文字体快闪，庆祝女真文正式入U」, [Bilibili](https://www.bilibili.com/video/BV1odec6pEqp/), 2026-09-16 | points to the download site | cited | none |
 
+| [WG2 N5207](https://www.unicode.org/wg2/docs/n5207-Jurchen.pdf), Andrew West, 2023-03-15 | Table 7: X-reference to Zhonghua Ziku PUA and draft code point. Table 6: BabelStone PUA kept as text | cited, not redistributed | `scripts/build_jurchen_encodings.py` |
+| [WG2 N5261R](https://www.unicode.org/L2/L2024/24139-n5261r-jurchen-ideographs.pdf), Andrew West, Sun Bojun and the Zhonghua Ziku project, 2024-06-12 | Table 4: final code point to X-references and Jin 1984 entries, and glyphs from the scan fonts | cited, not redistributed | `scripts/build_jurchen_encodings.py` |
+| [BabelStone Jurchen Berlin, Beijing, Toyo Bunko, Tianyige](https://www.babelstone.co.uk/Fonts/JurchenScan.html), Andrew West | the glyph at each Private Use code point, to read Table 4's images | downloaded at build time, not redistributed | `scripts/build_jurchen_encodings.py` |
+
 SHA-256 of the files as downloaded:
 
 - `Alari_jurc.dict.yaml`: `16952da9ea874bf2418fef63febdc8fca3e9322adab97c4a38181b0dd684bca4`
@@ -36,12 +40,28 @@ the core specification does not mention them. The sequences here are Alari's con
 each of the 537 agrees with the matching style set (`ss01`–`ss05`); this was checked on the font's own
 tables.
 
+## Older encodings
+
+`data/encodings/legacy-map.tsv` has one row for each Private Use code point and `characters.tsv` one row for each character. `SOURCES.txt` pins the digests of the PDFs and fonts.
+
+- **Zhonghua Ziku PUA** (U+F1C6E onward, the ZHZKCHIN-jurc font). 1,379 code points through N5207's Table 7 and N5261R's X-references. 1,377 name one character. Two are marked ambiguous: U+F1D52 stands for X-0231 and X-0232, listed under U+18E99 and U+18EA6, and U+F1E65 for X-0511, listed under both U+18F41 and U+18F87, which N5261R cross-references.
+- **BabelStone PUA** (U+E002 to U+E6FB, the four scan fonts, which West says share the code points of his private font). 780 code points. N5261R's Table 4 prints the fonts' glyphs as images, so each image is matched to its font's glyphs. 763 are matched at a similarity of 0.8 or more with one character each, and N5207's Table 6, which keeps many of the same glyphs as text, agrees on 759 of the 764 it can check.
+  - The other five (U+E282, U+E3CD, U+E42E, U+E5AA, U+E6FB) follow the image: looked at side by side, each glyph is the character Table 4 prints it under, and the draft row points elsewhere.
+  - U+E6F4 draws two characters: U+18F70 in Tianyige and U+1905C in Toyo Bunko.
+  - 12 are known only from the text.
+  - 4 have no link yet (U+E0DC, U+E686, U+E6F2, U+E6F3).
+- **N5207 draft code points** are listed per character. They fall in the same block as the final code points and mean different characters, so nothing converts them and the site does not search them.
+- **Forms.** A legacy code names a glyph, and several can share one character. N5261R does not tie an X-reference to one of Alari's variant selectors, so that link is left open.
+- **Jurchen Small.** Its nine Private Use code points overlap the scan fonts' range and are a different script, encoded in Unicode's Khitan Small Script block. They are not tabulated here.
+- **CCAMC's Private Use encoding** is not tabulated, by this site's policy. Text in it cannot be converted here.
+
 ## Found, not used
 
 - [CCAMC](http://ccamc.org/) (also ccamc.co): not used, by this site's policy. Its font pages list a Jurchen Kaiti face and Cangjie and stroke schemes.
 - Unicode code charts [U18E00](https://www.unicode.org/charts/PDF/U18E00.pdf), [U191A0](https://www.unicode.org/charts/PDF/U191A0.pdf): the embedded font is `ZHZKCHINjurcunicode`. [Unicode's font page](https://www.unicode.org/charts/fonts.html) says chart fonts may not be extracted or reused without the owner's licence.
 - [Xebec33/jurchen_wubi](https://github.com/Xebec33/jurchen_wubi), GPL-3.0, 2026-08-17: a Wubi 86 scheme, encoded entirely in the Private Use Area of the CCAMC font, whose README thanks CCAMC for information and fonts.
-- [BabelStone Jurchen Small](https://www.babelstone.co.uk/Fonts/JurchenSmall.html), v1.000 of 2023-04-25: nine Private Use glyphs of the Jurchen small script. A third-party [issue](https://github.com/tyohDeveloper/Unicode-Explorer/issues/11) (tyohDeveloper, 2026-10-09) reports the Berlin, Beijing, Toyo Bunko and Tianyige faces are Private Use too; those pages could not be reached to confirm.
+- [BabelStone Jurchen Small](https://www.babelstone.co.uk/Fonts/JurchenSmall.html), v1.000 of 2023-04-25: nine Private Use glyphs of the Jurchen small script.
+- [Index to Jin Qizong's dictionary](https://www.babelstone.co.uk/Jurchen/JQZ1984_Index.html), Andrew West: an edited transcription of the 1984 index, with a Chinese gloss for each word and its pages. A lead for meanings, not used yet: tying a word to a character needs the dictionary's entries.
 - GNU Unifont: the same issue reports draft glyphs in 17.0.05 removed in 18.0.01. Not checked directly.
 - Noto: the same issue found no Noto face mapping these code points as of 2026-10-09.
 - [English Wiktionary, Jurchen lemmas](https://en.wiktionary.org/wiki/Category:Jurchen_lemmas): about twenty entries, in Latin letters with images of the script. Tying them to code points through a shared reading would be guesswork, so they are left out.

@@ -9,7 +9,7 @@
   import G from '../ui/G.svelte'
   import { route, setQuery, go, link } from '../lib/route.svelte.js'
   import { preview, choose, put, autofocus } from '../lib/ui.svelte.js'
-  import { byCode, byCodePoint, byNumber, jurchenIn } from '../lib/search.js'
+  import { byCode, byCodePoint, byNumber, byReference, jurchenIn } from '../lib/search.js'
   import { searchReadings } from '../lib/reading.js'
   import { t } from '../lib/i18n.svelte.js'
 
@@ -30,6 +30,8 @@
     }
     const number = byNumber(text)
     if (number.length) out.push({ key: 'number', title: t('find.group.number'), total: 1, items: number.map(char => ({ char, sub: readingOf(char) })) })
+    const referred = byReference(text)
+    if (referred.length) out.push({ key: 'reference', title: t('find.group.reference'), total: referred.length, items: referred.map(char => ({ char, sub: readingOf(char) })) })
     const points = byCodePoint(text)
     if (points.length) out.push({ key: 'cp', title: t('find.group.codepoint'), total: points.length, items: points.slice(0, 48).map(char => ({ char, sub: codePoint(char) })) })
     if (/^[hspdzb]+$/i.test(text)) {
@@ -78,6 +80,7 @@
     { value: 'dʒo' },
     { value: 'hpsz', mono: true },
     { value: '10000', mono: true },
+    { value: 'X-0005', mono: true },
     { value: 'U+18E01', mono: true },
   ]
 </script>
