@@ -28,8 +28,8 @@ export function searchReadings(readings, query) {
   for (const reading of readings) {
     const own = common(reading.raw)
     const tier = own === raw || reading.folded === folded ? 0
-      : reading.folded.startsWith(folded) ? 1
-        : reading.folded.includes(folded) ? 2 : -1
+      : reading.folded.startsWith(folded) || own.startsWith(raw) ? 1
+        : reading.folded.includes(folded) || own.includes(raw) ? 2 : -1
     if (tier >= 0) hits.push({ char: reading.char, raw: reading.raw, tier })
   }
   return hits.sort((a, b) => a.tier - b.tier || a.raw.length - b.raw.length || (a.char.codePointAt(0) ?? 0) - (b.char.codePointAt(0) ?? 0))
