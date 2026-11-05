@@ -15,6 +15,7 @@
   import Find from './pages/Find.svelte'
   import Strokes from './pages/Strokes.svelte'
   import Radicals from './pages/Radicals.svelte'
+  import Convert from './pages/Convert.svelte'
   import Reading from './pages/Reading.svelte'
   import Draw from './pages/Draw.svelte'
   import Transcribe from './pages/Transcribe.svelte'
@@ -39,7 +40,7 @@
   /** The phone's tab strip, scrolled to keep the current finder in view. @type {HTMLElement | null} */
   let tabs = $state(null)
   /** On a phone the strip holds the four finders a reader starts from; the rest wait in a sheet. */
-  const EXTRAS = new Set(['radicals', 'transcribe'])
+  const EXTRAS = new Set(['radicals', 'transcribe', 'convert'])
   let menu = $state(false)
   /** @type {HTMLDialogElement | null} */
   let sheet = $state(null)
@@ -176,6 +177,7 @@
         {:else if route.page === 'transcribe'}<Transcribe />
         {:else if route.page === 'draw'}<Draw />
         {:else if route.page === 'radicals'}<Radicals />
+        {:else if route.page === 'convert'}<Convert />
         {:else}<About />{/if}
         {#if route.page !== 'about'}
           <footer class="foot ui-hint">

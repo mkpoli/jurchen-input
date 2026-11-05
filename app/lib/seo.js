@@ -30,6 +30,10 @@ export const PAGE_SEO = {
     title: 'Transcribe — Jurchen Input',
     description: 'Read a piece of Jurchen text character by character, with the reading of each one under it.',
   },
+  convert: {
+    title: 'Convert — Jurchen Input',
+    description: 'Turn Jurchen text in the Private Use codes of older fonts into Unicode 18, and back, using tables drawn from the encoding proposals.',
+  },
   about: {
     title: 'Sources — Jurchen Input',
     description: 'Where every record on Jurchen Input comes from: Unicode 18.0’s JurchenSources.txt and Alari’s font and stroke table.',
