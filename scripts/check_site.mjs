@@ -57,7 +57,9 @@ for (const view of VIEWS) for (const scheme of /** @type {const} */ (['light', '
   await page.addInitScript(sample => { localStorage.setItem('jurchen-input:text', sample) }, SAMPLE)
   for (const path of PAGES) {
     await step(`${view.name} ${scheme} /${path}`, async () => {
-      await page.goto(`${SITE}/${path}${path.includes('?') ? '&' : '?'}c=18E01`, { waitUntil: 'networkidle' })
+      // A phone opens a linked character as a sheet over the finder, so it visits the finder bare.
+      const opened = view.name === 'phone' ? '' : `${path.includes('?') ? '&' : '?'}c=18E01`
+      await page.goto(`${SITE}/${path}${opened}`, { waitUntil: 'networkidle' })
       await page.evaluate(() => document.fonts.ready)
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)
       assert.ok(overflow <= 0, `the page is ${overflow}px wider than the screen`)
@@ -171,6 +173,50 @@ await step('draw: strokes on the pad bring up candidates, and one can be added',
   await page.screenshot({ path: join(SHOTS, 'flow-draw.png') })
   await page.locator('.results .ui-tile').first().dblclick()
   assert.ok((await text()).length >= 2)
+})
+
+await step('strokes: a form chosen in the card stays chosen', async () => {
+  await page.goto(`${SITE}/strokes`, { waitUntil: 'networkidle' })
+  await page.locator('[data-primary]').pressSequentially('hpz')
+  await page.locator('aside.card .ui-tile').nth(1).click()
+  await page.waitForTimeout(100)
+  assert.match(await page.locator('aside.card .cp').innerText(), /U\+18E01 U\+FE00/)
+  await page.keyboard.press('Escape')
+})
+
+await step('text: Backspace in the code box takes a selection and nothing else', async () => {
+  await page.goto(`${SITE}/strokes`, { waitUntil: 'networkidle' })
+  await page.evaluate(() => localStorage.setItem('jurchen-input:text', '\u{18E00}\u{18E01}\u{18E02}'))
+  await page.reload({ waitUntil: 'networkidle' })
+  await page.locator('#writing').evaluate((/** @type {HTMLTextAreaElement} */ field) => {
+    field.focus()
+    field.setSelectionRange(2, 4)
+    field.dispatchEvent(new Event('select'))
+  })
+  await page.locator('[data-primary]').focus()
+  await page.keyboard.press('Backspace')
+  assert.equal(await text(), '\u{18E00}\u{18E02}')
+})
+
+await step('input method: a code point is typed whole', async () => {
+  await page.goto(`${SITE}/`, { waitUntil: 'networkidle' })
+  await page.evaluate(() => localStorage.setItem('jurchen-input:text', ''))
+  await page.reload({ waitUntil: 'networkidle' })
+  await page.getByRole('button', { name: 'Input method' }).click()
+  await page.locator('.ime input').pressSequentially('U+18E01')
+  assert.equal(await text(), '')
+  await page.keyboard.press('Enter')
+  assert.equal(await text(), '\u{18E01}')
+})
+
+await step('phone: a shared link opens the character', async () => {
+  const phone = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, locale: 'en-US' })
+  const tab = await phone.newPage()
+  await tab.goto(`${SITE}/?c=18E01`, { waitUntil: 'networkidle' })
+  await tab.waitForTimeout(400)
+  assert.ok(await tab.locator('aside.card .cp').isVisible())
+  await tab.screenshot({ path: join(SHOTS, 'phone-card.png') })
+  await phone.close()
 })
 
 await step('settings: the language switch reads the catalogue', async () => {

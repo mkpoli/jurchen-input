@@ -104,6 +104,8 @@ describe('readings', () => {
   })
   test('the source j stays apart from dʒ, as typed exactly it still matches', () => {
     expect(searchReadings(ix.readings, 'jam')[0]).toMatchObject({ raw: 'jam', tier: 0 })
+    expect(searchReadings(ix.readings, 'ja').map(hit => hit.raw)).toContain('jam')
+    expect(searchReadings(ix.readings, 'taij').map(hit => hit.raw)).toContain('taiji')
   })
 })
 
