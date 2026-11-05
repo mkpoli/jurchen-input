@@ -5,6 +5,7 @@ import { fill, ix, radicalNumber } from '../app/lib/index.js'
 import { baseOf, clusters, codePoint, fromParam, lastCluster, readSource, toParam, variantOf } from '../app/lib/script.js'
 import { byCode, byCodePoint, byNumber, jurchenIn, nextLetters } from '../app/lib/search.js'
 import { foldQuery, foldReading, searchReadings } from '../app/lib/reading.js'
+import { buildChart, cellKey, rimeGroup, syllablesOf } from '../app/lib/syllables.js'
 import { indexShapes, parseShapes, rankShapes, SIZE } from '../app/lib/shape.js'
 
 const records = JSON.parse(gunzipSync(readFileSync('app/data/jurchen.json.gz')).toString())
@@ -85,6 +86,37 @@ describe('stroke codes', () => {
     expect(byNumber('12345')).toEqual([])
     expect(byCodePoint('U+18E01')).toEqual(['\u{18E01}'])
     expect(byCodePoint('U+1700')).toEqual([])
+  })
+})
+
+describe('syllable chart', () => {
+  test('a reading splits into initial and rime', () => {
+    expect(syllablesOf('nie')).toEqual([{ initial: 'n', rime: 'ie' }])
+    expect(syllablesOf('dʒuan')).toEqual([{ initial: 'dʒ', rime: 'uan' }])
+    expect(syllablesOf('ŋgai')).toEqual([{ initial: 'ŋg', rime: 'ai' }])
+    expect(syllablesOf('a')).toEqual([{ initial: '', rime: 'a' }])
+    expect(syllablesOf('(g)an')).toEqual([{ initial: 'g', rime: 'an' }])
+    expect(syllablesOf('ŋi, gi')).toEqual([{ initial: 'ŋ', rime: 'i' }, { initial: 'g', rime: 'i' }])
+    expect(syllablesOf('r')).toEqual([{ initial: '', rime: 'r' }])
+    expect(syllablesOf('in ku')).toEqual([{ initial: '', rime: 'in' }, { initial: 'k', rime: 'u' }])
+    expect(syllablesOf('fai muta')).toEqual([{ initial: 'f', rime: 'ai' }])
+    expect(syllablesOf('ku duman')).toEqual([{ initial: 'k', rime: 'u' }])
+    expect(syllablesOf('xodiwo o')).toEqual([{ initial: '', rime: 'o' }])
+  })
+  test('a word of two syllables or more has none', () => {
+    for (const raw of ['tumən', 'ania', 'giaxu.un', 'bandi']) expect(syllablesOf(raw)).toEqual([])
+  })
+  test('rimes fall into their groups', () => {
+    expect(['a', 'ie', 'an', 'aŋ', 'ar', 'r'].map(rimeGroup)).toEqual(['open', 'glide', 'n', 'ng', 'other', 'other'])
+  })
+  test('every reading is either charted or counted as longer', () => {
+    const chart = buildChart(ix.readings)
+    expect(chart.charted + chart.consonants + chart.longer).toBe(806)
+    expect(chart.consonants).toBe(3)
+    expect(chart.cells.get(cellKey('n', 'ie'))?.map(cell => cell.char)).toContain('\u{18E00}')
+    expect(chart.initials[0]).toBe('')
+    for (const cells of chart.cells.values()) for (const cell of cells) expect(syllablesOf(cell.raw).length).toBeGreaterThan(0)
+    expect(chart.cells.get(cellKey('f', 'ai'))?.map(cell => cell.raw)).toContain('fai muta')
   })
 })
 

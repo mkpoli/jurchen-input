@@ -15,6 +15,7 @@ check its record, and put it into your text.
   says so.
 - **Radicals**: Unicode's 51 radicals, each with its characters by stroke count.
 - **Reading**: the readings of Jin Qizong's dictionary, with phonetic letters or plain ones.
+- **Syllables**: the one-syllable readings laid out like a kana chart, by initial and rime.
 - **Transcribe**: the text with the reading of each character under it.
 
 The card of a character shows its code points, stroke code, variant forms, reading, numeric value
