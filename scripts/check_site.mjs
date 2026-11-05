@@ -162,6 +162,18 @@ await step('syllables: a reading stands at its initial and rime', async () => {
   assert.equal(await page.getByTitle(/^tumən /).count(), 0, 'a word of two syllables stays out')
 })
 
+await step('card: an origin is cited, and a character with none says so', async () => {
+  await page.goto(`${SITE}/?c=18F7A`, { waitUntil: 'networkidle' })
+  const card = page.locator('aside.card')
+  assert.match(await card.innerText(), /Written as Chinese 日 in Jin inscriptions/)
+  assert.match(await card.innerText(), /Altered from Chinese 日, keeping its meaning/)
+  assert.ok(await card.locator('a[href*="chikyukotobamura"]').count() >= 2)
+  await page.goto(`${SITE}/?c=18E00`, { waitUntil: 'networkidle' })
+  assert.match(await page.locator('aside.card').innerText(), /No source open to this site/)
+  await page.goto(`${SITE}/?c=18E01`, { waitUntil: 'networkidle' })
+  assert.match(await page.locator('aside.card').innerText(), /all Jurchen numerals/)
+})
+
 await step('radicals: choosing one lists its characters', async () => {
   await page.goto(`${SITE}/radicals`, { waitUntil: 'networkidle' })
   assert.equal(await page.locator('.palette .ui-tile').count(), 51)

@@ -1,12 +1,14 @@
 # /// script
 # requires-python = ">=3.11"
 # ///
-"""Build app/data/jurchen.json.gz from the two pinned sources under data/.
+"""Build app/data/jurchen.json.gz from the pinned sources under data/.
 
 Radical, strokes, source, reading and numeric value come from Unicode's JurchenSources.txt; stroke
-codes, with the variant sequences they name, come from Alari's Rime table. A sequence the table
+codes, with the variant sequences they name, come from Alari's Rime table; character origins come
+from data/etymology/origins.tsv. A sequence the table
 lists and the font does not draw stops the build.
 """
+import csv
 import gzip
 import hashlib
 import json
@@ -16,6 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 UCD = ROOT / 'data/unicode/JurchenSources-18.0.0.txt'
 TABLE = ROOT / 'data/alari/Alari_jurc.dict.yaml'
+ORIGINS = ROOT / 'data/etymology/origins.tsv'
 OUT = ROOT / 'app/data/jurchen.json.gz'
 CHARS = range(0x18E00, 0x19192)
 RADICALS = range(0x191A0, 0x191D3)
@@ -65,12 +68,17 @@ def main():
     codes = table()
     assert len(codes) == 1502 and len({text for text, _ in codes}) == 1502
     assert {ord(text[0]) for text, _ in codes} == set(CHARS) | set(RADICALS)
+    with ORIGINS.open(encoding='utf-8', newline='') as source_file:
+        origins = [[chr(int(row['unicode'], 16)), row['relation'], row['source_char'], row['work']]
+                   for row in csv.DictReader(source_file, delimiter='\t')]
+    assert all(0x18E00 <= ord(char) <= 0x19191 for char, *_ in origins)
     document = {
         'unicode': '18.0.0',
         'table': {'name': 'Alari_jurc', 'version': '2026.05.29', 'sha256': hashlib.sha256(TABLE.read_bytes()).hexdigest()},
         'rows': rows,
         'radicals': [chr(point) for point in RADICALS],
         'codes': codes,
+        'origins': origins,
     }
     raw = json.dumps(document, ensure_ascii=False, separators=(',', ':')).encode()
     OUT.parent.mkdir(parents=True, exist_ok=True)
