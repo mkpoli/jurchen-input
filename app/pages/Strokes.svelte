@@ -3,6 +3,7 @@
   // character. The code box behaves like an input method: candidates are numbered, Space or a digit
   // commits one into the text, Backspace in an empty box deletes from the text. The keys below dim
   // when no code continues with them.
+  import { untrack } from 'svelte'
   import { db } from '../lib/db.svelte.js'
   import { readingOf } from '../lib/index.js'
   import G from '../ui/G.svelte'
@@ -47,7 +48,8 @@
   })
   $effect(() => {
     const char = shown[active]?.char
-    if (char) preview(char)
+    // Only the highlight drives this: a form chosen in the card stays chosen.
+    if (char) untrack(() => preview(char))
   })
 
   /** @param {string} value */
