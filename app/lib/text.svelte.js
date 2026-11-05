@@ -71,10 +71,17 @@ export function insert(chars) {
 /** Delete the character before the caret, a variant sequence as one, as Backspace in an empty code box does. */
 export function backspace() {
   const start = text.start < 0 ? text.value.length : text.start
+  // A selection is what goes, and nothing before it.
+  if (text.end > start) {
+    text.value = text.value.slice(0, start) + text.value.slice(text.end)
+    text.end = start
+    save()
+    return
+  }
   const before = text.value.slice(0, start)
   if (!before) return
   const removed = lastCluster(before) || ([...before].at(-1) ?? '')
-  text.value = text.value.slice(0, start - removed.length) + text.value.slice(Math.max(start, text.end))
+  text.value = text.value.slice(0, start - removed.length) + text.value.slice(start)
   text.start = text.end = start - removed.length
   save()
 }
