@@ -88,7 +88,7 @@
     }
     // The number keys take the candidate at that place, as an input method does, unless the query
     // is itself one that takes digits: a number or a code point.
-    if (/^[1-9]$/.test(event.key) && hits.length >= Number(event.key) && text && !/^(u\+?)?[0-9a-f]*$/i.test(text)) {
+    if (/^[1-9]$/.test(event.key) && hits.length >= Number(event.key) && text && !/^(u\+[0-9a-f]*|u[0-9a-f]*[0-9][0-9a-f]*|[0-9]+)$/i.test(text)) {
       event.preventDefault()
       put(hits[Number(event.key) - 1].char)
       return

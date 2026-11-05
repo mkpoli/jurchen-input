@@ -207,6 +207,9 @@ await step('input method: a code point is typed whole', async () => {
   assert.equal(await text(), '')
   await page.keyboard.press('Enter')
   assert.equal(await text(), '\u{18E01}')
+  await page.locator('.ime input').pressSequentially('dd')
+  await page.keyboard.press('1')
+  assert.ok((await text()).length > 2, 'a digit picks after a code made of hex letters')
 })
 
 await step('phone: a shared link opens the character', async () => {
