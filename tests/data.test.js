@@ -1,0 +1,125 @@
+import { describe, expect, test, beforeAll } from 'bun:test'
+import { gunzipSync } from 'node:zlib'
+import { readFileSync } from 'node:fs'
+import { fill, ix, radicalNumber } from '../app/lib/index.js'
+import { baseOf, clusters, codePoint, fromParam, lastCluster, readSource, toParam, variantOf } from '../app/lib/script.js'
+import { byCode, byCodePoint, byNumber, jurchenIn, nextLetters } from '../app/lib/search.js'
+import { foldQuery, foldReading, searchReadings } from '../app/lib/reading.js'
+import { indexShapes, parseShapes, rankShapes, SIZE } from '../app/lib/shape.js'
+
+const records = JSON.parse(gunzipSync(readFileSync('app/data/jurchen.json.gz')).toString())
+const shapes = new Uint8Array(gunzipSync(readFileSync('app/data/jurchen-shapes.bin.gz')))
+
+beforeAll(() => fill(records))
+
+describe('records', () => {
+  test('cover the blocks of Unicode 18.0', () => {
+    expect(ix.entries.size).toBe(914)
+    expect(ix.radicals.length).toBe(51)
+    expect(ix.codes.size).toBe(1502)
+    expect(ix.readings.length).toBe(806)
+    expect(ix.numerals.size).toBe(30)
+    expect(ix.byRadical.size).toBe(51)
+  })
+  test('hold the values of JurchenSources.txt', () => {
+    const entry = ix.entries.get('\u{18E01}')
+    expect(entry).toMatchObject({ radical: 1, strokes: 3, reading: 'tumən', numeric: 10000 })
+    expect(ix.numerals.get(3)).toBe('\u{19129}')
+  })
+  test('give each radical its number', () => {
+    expect(radicalNumber('\u{191A0}')).toBe(1)
+    expect(radicalNumber('\u{191D2}')).toBe(51)
+    expect(radicalNumber('\u{18E01}')).toBe(0)
+  })
+})
+
+describe('sequences', () => {
+  test('a variant is one character in text', () => {
+    expect(clusters('a\u{18E01}\uFE00\u{18E02}')).toEqual(['\u{18E01}\uFE00', '\u{18E02}'])
+    expect(lastCluster('\u{18E01}\uFE00')).toBe('\u{18E01}\uFE00')
+    expect(variantOf('\u{18E01}\uFE00')).toBe(1)
+    expect(variantOf('\u{18E01}')).toBe(0)
+    expect(baseOf('\u{18E01}\uFE00')).toBe('\u{18E01}')
+    expect(codePoint('\u{18E01}\uFE00')).toBe('U+18E01 U+FE00')
+    expect(jurchenIn('\u{18E01}\u{18E01}x')).toEqual(['\u{18E01}'])
+  })
+  test('an address round-trips, and names only Jurchen', () => {
+    expect(fromParam(toParam('\u{18E01}\uFE00'))).toBe('\u{18E01}\uFE00')
+    expect(fromParam('17000')).toBe('')
+    expect(fromParam('18E01-FE10')).toBe('')
+  })
+  test('source references are read in each of their forms', () => {
+    expect(readSource('NC:002.02')).toEqual({ key: 'nc', params: { page: '2', entry: '2' } })
+    expect(readSource('NC:043.09,044.01')).toEqual({ key: 'ncRun', params: { page: '43', entry: '9', endPage: '44', endEntry: '1' } })
+    expect(readSource('SJ-B:007A.1')).toEqual({ key: 'sj', params: { folio: '7A', position: '1' } })
+    expect(readSource('JJ:363')).toEqual({ key: 'jj', params: { page: '363' } })
+    expect(readSource('N5131:X-1378')).toEqual({ key: 'n5131', params: { entry: 'X-1378' } })
+  })
+  test('every source reference in the records has a known form', () => {
+    for (const entry of ix.entries.values()) expect(entry.source).toMatch(/^(NC:\d+\.\d+(,\d+\.\d+)?|SJ-B:\w+\.\d+|JJ:\d+|N5131:X-\d+)$/)
+  })
+})
+
+describe('stroke codes', () => {
+  test('the exact code comes first and every hit begins with the letters', () => {
+    const hits = byCode('hhz')
+    expect(hits[0].code).toBe('hhz')
+    expect(hits[0].char).toBe('\u{18E00}')
+    for (const hit of hits) expect(hit.code.startsWith('hhz')).toBe(true)
+  })
+  test('a radical is reached with b', () => {
+    expect(byCode('hb').map(hit => hit.char)).toContain('\u{191A0}')
+  })
+  test('variants can be kept out', () => {
+    const all = byCode('h'), base = byCode('h', { variants: false })
+    expect(all.length).toBeGreaterThan(base.length)
+    for (const hit of base) expect(variantOf(hit.char)).toBe(0)
+  })
+  test('the keys that can follow are counted', () => {
+    const next = nextLetters('')
+    expect([...next.keys()].sort()).toEqual(['d', 'h', 'p', 's', 'z'])
+    expect(nextLetters('hhz').size).toBeGreaterThan(0)
+  })
+  test('other finders', () => {
+    expect(byNumber('10000')).toEqual(['\u{18E01}'])
+    expect(byNumber('12345')).toEqual([])
+    expect(byCodePoint('U+18E01')).toEqual(['\u{18E01}'])
+    expect(byCodePoint('U+1700')).toEqual([])
+  })
+})
+
+describe('readings', () => {
+  test('fold phonetic letters and plain ones alike', () => {
+    expect(foldReading('tumən')).toBe(foldQuery('tumen'))
+    expect(foldReading('ədʒən')).toBe(foldQuery('ejen'))
+    expect(foldReading('ədʒən')).toBe(foldQuery('ezhen'))
+    expect(foldReading('ʃan')).toBe(foldQuery('shan'))
+  })
+  test('rank exact before begins before contains', () => {
+    const hits = searchReadings(ix.readings, 'tumen')
+    expect(hits[0]).toMatchObject({ char: '\u{18E01}', tier: 0 })
+    expect(searchReadings(ix.readings, 'dʒo')[0].raw).toBe('dʒo')
+    const tiers = searchReadings(ix.readings, 'a').map(hit => hit.tier)
+    expect([...tiers].sort()).toEqual(tiers)
+  })
+  test('the source j stays apart from dʒ, as typed exactly it still matches', () => {
+    expect(searchReadings(ix.readings, 'jam')[0]).toMatchObject({ raw: 'jam', tier: 0 })
+  })
+})
+
+describe('drawing search', () => {
+  const index = indexShapes(parseShapes(shapes))
+  test('holds every sequence', () => {
+    expect(index.chars.length).toBe(1502)
+    expect(new Set(index.chars)).toEqual(new Set(ix.codes.keys()))
+  })
+  test('a glyph drawn as its own line ranks at the top', () => {
+    for (const char of ['\u{18E01}', '\u{19129}', '\u{18E36}', '\u{191BF}']) {
+      const at = index.chars.indexOf(char)
+      const drawn = new Uint8Array(SIZE * SIZE)
+      for (const cell of index.inks[at]) drawn[cell] = 1
+      const top = rankShapes(index, drawn, { limit: 3 }).map(hit => hit.char)
+      expect(top).toContain(char)
+    }
+  })
+})
