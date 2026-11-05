@@ -16,24 +16,32 @@ const INITIALS = ['', 'b', 'p', 'm', 'f', 'w', 'd', 't', 'n', 'l', 'lx', 'r', 'd
 function split(word) {
   const runs = word.match(VOWEL_RUN) ?? []
   if (runs.length > 1) return null
-  // A reading of no vowel at all, such as r, is its own rime.
+  // A reading of no vowel at all, such as r, is its own column among the other endings.
   if (!runs.length) return { initial: '', rime: word }
   const at = word.indexOf(/** @type {string} */ (runs[0]))
   return { initial: word.slice(0, at), rime: word.slice(at) }
 }
 
 /**
- * The syllables a reading stands for, or none when it is a word of two or more. `ŋi, gi` is two
- * readings of one character, and `(g)an` an initial written as optional, charted under that initial.
+ * The syllables a reading stands for, or none when it is a word of two or more. A comma or a space
+ * separates alternative readings of one character, so `ŋi, gi` is two syllables and `fai muta` the
+ * one syllable fai beside a longer word. `(g)an` is an initial written as optional, charted under
+ * that initial.
  * @param {string} raw
  * @returns {Syllable[]}
  */
 export function syllablesOf(raw) {
-  const words = raw.split(', ')
-  if (words.some(word => /[ .]/.test(word))) return []
-  const found = words.map(word => split(word.replace(/[()]/g, '')))
-  return found.every(Boolean) ? /** @type {Syllable[]} */ (found) : []
+  /** @type {Syllable[]} */
+  const found = []
+  for (const word of raw.split(/,? /)) {
+    const syllable = word.includes('.') ? null : split(word.replace(/[()]/g, ''))
+    if (syllable) found.push(syllable)
+  }
+  return found
 }
+
+/** A reading of a consonant alone, such as r, which makes no syllable. @param {string} raw */
+export const isConsonantOnly = raw => !new RegExp(`[${VOWELS}]`).test(raw)
 
 /** Which column group a rime stands in. @param {string} rime @returns {RimeGroup} */
 export function rimeGroup(rime) {
@@ -54,7 +62,7 @@ const rimeOrder = rime => [...rime].map(char => {
 /**
  * Lay the readings out by initial and rime.
  * @param {{ char: string, raw: string }[]} readings
- * @returns {{ initials: string[], rimes: string[], cells: Map<string, Cell[]>, charted: number, longer: number }}
+ * @returns {{ initials: string[], rimes: string[], cells: Map<string, Cell[]>, charted: number, longer: number, consonants: number }}
  */
 export function buildChart(readings) {
   /** @type {Map<string, Cell[]>} */
@@ -63,10 +71,12 @@ export function buildChart(readings) {
   const rimes = new Set()
   let charted = 0
   let longer = 0
+  let consonants = 0
   for (const { char, raw } of readings) {
     const syllables = syllablesOf(raw)
     if (!syllables.length) { longer++; continue }
-    charted++
+    if (isConsonantOnly(raw)) consonants++
+    else charted++
     for (const { initial, rime } of syllables) {
       initials.add(initial)
       rimes.add(rime)
@@ -84,6 +94,7 @@ export function buildChart(readings) {
     cells,
     charted,
     longer,
+    consonants,
   }
 }
 

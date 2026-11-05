@@ -98,19 +98,25 @@ describe('syllable chart', () => {
     expect(syllablesOf('(g)an')).toEqual([{ initial: 'g', rime: 'an' }])
     expect(syllablesOf('ŋi, gi')).toEqual([{ initial: 'ŋ', rime: 'i' }, { initial: 'g', rime: 'i' }])
     expect(syllablesOf('r')).toEqual([{ initial: '', rime: 'r' }])
+    expect(syllablesOf('in ku')).toEqual([{ initial: '', rime: 'in' }, { initial: 'k', rime: 'u' }])
+    expect(syllablesOf('fai muta')).toEqual([{ initial: 'f', rime: 'ai' }])
+    expect(syllablesOf('ku duman')).toEqual([{ initial: 'k', rime: 'u' }])
+    expect(syllablesOf('xodiwo o')).toEqual([{ initial: '', rime: 'o' }])
   })
   test('a word of two syllables or more has none', () => {
-    for (const raw of ['tumən', 'ania', 'ku duman', 'giaxu.un', 'in ku', 'bandi']) expect(syllablesOf(raw)).toEqual([])
+    for (const raw of ['tumən', 'ania', 'giaxu.un', 'bandi']) expect(syllablesOf(raw)).toEqual([])
   })
   test('rimes fall into their groups', () => {
     expect(['a', 'ie', 'an', 'aŋ', 'ar', 'r'].map(rimeGroup)).toEqual(['open', 'glide', 'n', 'ng', 'other', 'other'])
   })
   test('every reading is either charted or counted as longer', () => {
     const chart = buildChart(ix.readings)
-    expect(chart.charted + chart.longer).toBe(806)
+    expect(chart.charted + chart.consonants + chart.longer).toBe(806)
+    expect(chart.consonants).toBe(3)
     expect(chart.cells.get(cellKey('n', 'ie'))?.map(cell => cell.char)).toContain('\u{18E00}')
     expect(chart.initials[0]).toBe('')
     for (const cells of chart.cells.values()) for (const cell of cells) expect(syllablesOf(cell.raw).length).toBeGreaterThan(0)
+    expect(chart.cells.get(cellKey('f', 'ai'))?.map(cell => cell.raw)).toContain('fai muta')
   })
 })
 

@@ -62,7 +62,7 @@
       </table>
     </div>
     <p class="ui-hint">
-      {t('syllables.counts', { charted: chart.charted, longer: chart.longer })}
+      {t('syllables.counts', { charted: chart.charted, consonants: chart.consonants, longer: chart.longer })}
       <a href="/reading" onclick={event => { event.preventDefault(); go('reading') }}>{t('nav.reading')}</a>
     </p>
     <p class="ui-hint">{t('syllables.note')}</p>
