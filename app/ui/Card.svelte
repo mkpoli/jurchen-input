@@ -28,7 +28,7 @@
     n5261r: { label: 'card.origin.cite.n5261r', url: 'https://www.unicode.org/L2/L2024/24139-n5261r-jurchen-ideographs.pdf' },
     kiyose: { label: 'card.origin.cite.kiyose', url: 'https://www.chikyukotobamura.org/muse/wr_easia_9.html' },
     west2012: { label: 'card.origin.cite.west2012', url: 'https://www.babelstone.co.uk/Blog/2012/12/one-to-twenty-in-jurchen-khitan-and-lute.html' },
-    jinjin1980: { label: 'card.origin.cite.jinjin1980', url: 'https://archive.org/details/Khitan-et-Jurchen-languages' },
+    jinjin1980: { label: 'card.origin.cite.jinjin1980', url: 'https://archive.org/download/Khitan-et-Jurchen-languages/%E5%A5%B3%E7%9C%9F%E8%AF%AD%E8%A8%80%E6%96%87%E5%AD%97%E7%A0%94%E7%A9%B6.pdf#page=67' },
   })
   const address = $derived(char ? `${location.origin}${link('', char)}` : '')
 </script>

@@ -12,11 +12,10 @@ Retrieved 2026-11-05 unless noted.
 | Alari Xuwasun Jurchen, `AlariXuwasunJurchen-Regular（公测版）.otf`, name table version 0.000 of 2026-10-12, by Sulfa, Dooran and Raxon7, same site, folder 女真文资料/女真文字体 | glyphs for 914 + 51 code points, 537 variants through VS1–VS5 and ss01–ss05 | SIL OFL 1.1, stated in the font's name table | `scripts/build_jurchen_font.py`, `scripts/build_jurchen_shapes.py` |
 | Alari (Sulfa & Ayasala), 「没人给女真文做字体和输入法？那我们自己来」, [WeChat article](https://mp.weixin.qq.com/s/YaUP6bq4xt_18ywlRxCQpA), read from a copy of its text, since the page refuses automated fetches; its date was not seen | the stroke definitions on the Strokes page, the account of how the font and variants were made | cited | `app/pages/Strokes.svelte` |
 | 柳突破, 「Alari 仿宋女真文字体快闪，庆祝女真文正式入U」, [Bilibili](https://www.bilibili.com/video/BV1odec6pEqp/), 2026-09-16 | points to the download site | cited | none |
-
 | [WG2 N5261R](https://www.unicode.org/L2/L2024/24139-n5261r-jurchen-ideographs.pdf), Andrew West, Sun Bojun and the Zhonghua Ziku project, 2024-06-12, Table 3 | four characters written as the Chinese character of the same meaning in Jin inscriptions | cited | `data/etymology/origins.tsv` |
 | Kiyose Gizaburō Norifu 清瀬義三郎則府, 「女真文字」, [地球ことば村](https://www.chikyukotobamura.org/muse/wr_easia_9.html), updated 2022-06-18 | figures of characters imitating Chinese regular script and of Jurchen beside Khitan large script; the statement on numerals | cited | `data/etymology/origins.tsv` |
 | Andrew West, [One to Twenty in Jurchen, Khitan and Lute](https://www.babelstone.co.uk/Blog/2012/12/one-to-twenty-in-jurchen-khitan-and-lute.html), BabelStone blog, 2012-12-18 | a statement on numerals, that some follow the Chinese number and none plainly come from Khitan | cited | card text |
-| Jin Guangping 金光平 and Jin Qizong 金啓孮, 《女真語言文字研究》, Wenwu Chubanshe, 1980, ch. 4 §1, pp. 56–57 ([scan on Internet Archive](https://archive.org/details/Khitan-et-Jurchen-languages)) | characters altered from a named Chinese character, keeping its meaning or only its sound, with their readings | cited | `data/etymology/origins.tsv` |
+| Jin Guangping 金光平 and Jin Qizong 金啓孮, 《女真語言文字研究》, Wenwu Chubanshe, 1980, ch. 4 §1, pp. 56–57 ([PDF on Internet Archive](https://archive.org/download/Khitan-et-Jurchen-languages/%E5%A5%B3%E7%9C%9F%E8%AF%AD%E8%A8%80%E6%96%87%E5%AD%97%E7%A0%94%E7%A9%B6.pdf#page=67), the book's p. 56 is PDF p. 67) | characters altered from a named Chinese character, keeping its meaning or only its sound, with their readings | cited | `data/etymology/origins.tsv` |
 | Andrew West, [Index to Jin Qizong's dictionary](https://www.babelstone.co.uk/Jurchen/JQZ1984_Index.html) | gloss and page, used to tie Kiyose's figures to code points | used as a lookup, not redistributed | `data/etymology/origins.tsv` |
 
 SHA-256 of the files as downloaded:
@@ -52,7 +51,7 @@ tables.
 - **Left out of Kiyose's figures:** 金 and 枝, where the index leads to a character with another shape, and 生, 未, 蒙 and 太, where it leads to none. His 春夏秋冬, 東西南北 and bun/bitxə examples are also out, for lack of a reliable tie to a code point.
 - **Numerals.** Kiyose says all are modified Chinese characters, naming none. West (2012) says the forms are not obviously from Khitan and that some follow the Chinese number, without saying what the rest come from. Kane 1989, Table 6 sets them side by side ([scan on BabelStone](https://www.babelstone.co.uk/Jurchen/Kane_21.jpg)). The card reports both and assigns no individual source.
 - **Still to read in Jin and Jin 1980:** pp. 57–58 list characters taken from or altered from the Khitan large script, as glyphs with no readings. Ch. 4 §2 (pp. 66–107) follows changes of form. Pp. 59–62 give meanings for logographs and a list of phonograms.
-- **Not available here:** Kane 1989, pp. 21–24, which Wikipedia cites on derivation.
+- **Not read yet:** Kane 1989, pp. 21–24, which Wikipedia cites on derivation, and Jin Qizong 1984. Both are in [the same Internet Archive item](https://archive.org/details/Khitan-et-Jurchen-languages), as is 《女真译语研究》.
 
 ## Found, not used
 
