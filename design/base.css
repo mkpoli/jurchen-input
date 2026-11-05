@@ -175,8 +175,8 @@ html {
 
 @media (prefers-contrast: more) {
   :root {
-    --ui-color-ink-muted: light-dark(#4a443b, #c4bcae);
-    --ui-color-border: light-dark(#cbbfab, #48423a);
+    --ui-color-ink-muted: light-dark(#344a56, #b3c7ce);
+    --ui-color-border: light-dark(#b3c4cc, #3c535c);
     --ui-color-control-border: var(--ui-color-ink-muted);
     --ui-color-control-border-hover: var(--ui-color-ink-muted);
   }

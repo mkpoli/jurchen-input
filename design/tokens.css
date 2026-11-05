@@ -1,6 +1,6 @@
 /* Jurchen Input design tokens.
 
-   The semantic layer and the paper primitives. Every colour is a light-dark() pair,
+   The semantic layer and the primitives. Every colour is a light-dark() pair,
    so `color-scheme` alone picks the side; a page that offers a switch sets `data-theme="light"`
    or `data-theme="dark"` on the root.
 
@@ -22,34 +22,34 @@
 }
 
 :root {
-  /* The paper primitives; the semantic tokens below read them. */
-  --p-canvas: light-dark(#f4efe5, #141210);
-  --p-surface: light-dark(#fffcf6, #1c1a17);
-  --p-sunken: light-dark(#ece5d8, #100f0d);
-  --p-hover: light-dark(#efe7d9, #26231f);
-  --p-active: light-dark(#e4dbca, #302c27);
-  --p-ink: light-dark(#1e1b17, #ece6dc);
-  --p-soft: light-dark(#4a443b, #c4bcae);
-  --p-muted: light-dark(#6d6456, #9a9184);
-  --p-border: light-dark(#e3dbcc, #2e2a25);
-  --p-border-strong: light-dark(#cbbfab, #48423a);
-  --p-control: light-dark(#8b7d68, #807565);
-  --p-control-hover: light-dark(#6f6353, #9a8e7d);
-  --p-accent: light-dark(#a83418, #f08a6b);
-  --p-accent-hover: light-dark(#8c2a13, #ffa387);
-  --p-accent-active: light-dark(#721f0d, #ffb8a1);
-  --p-accent-soft: light-dark(#f6e3da, #3a2219);
-  --p-accent-ink: light-dark(#8c2a13, #ffa387);
-  --p-on-accent: light-dark(#fffaf2, #1d110c);
-  --p-danger: light-dark(#b42318, #ff8a80);
-  --p-danger-hover: light-dark(#971c13, #ffa59d);
-  --p-danger-soft: light-dark(#fdecea, #3a1e1c);
-  --p-on-danger: light-dark(#fffaf2, #2a0b08);
-  --p-inverse-surface: light-dark(#1e1b17, #ece6dc);
-  --p-inverse-ink: light-dark(#fffaf2, #141210);
-  --p-selection: light-dark(#f3ddd2, #4a2a1f);
-  --p-scrollbar: light-dark(#cbbfab, #48423a);
-  --p-scrollbar-hover: light-dark(#8b7d68, #807565);
+  /* The primitives; the semantic tokens below read them. */
+  --p-canvas: light-dark(#eaf0f2, #0d1619);
+  --p-surface: light-dark(#f8fbfc, #142126);
+  --p-sunken: light-dark(#dde6ea, #0a1114);
+  --p-hover: light-dark(#e3ebee, #1c2c32);
+  --p-active: light-dark(#d3dee3, #25383f);
+  --p-ink: light-dark(#12222b, #e3eef1);
+  --p-soft: light-dark(#344a56, #b3c7ce);
+  --p-muted: light-dark(#4f6773, #8aa1aa);
+  --p-border: light-dark(#d4dfe4, #24363d);
+  --p-border-strong: light-dark(#b3c4cc, #3c535c);
+  --p-control: light-dark(#6a828e, #6f8893);
+  --p-control-hover: light-dark(#526a77, #8aa1aa);
+  --p-accent: light-dark(#0a6c74, #5cc9d0);
+  --p-accent-hover: light-dark(#08565d, #7fd8de);
+  --p-accent-active: light-dark(#064349, #a0e4e9);
+  --p-accent-soft: light-dark(#d4ecee, #12363b);
+  --p-accent-ink: light-dark(#08565d, #7fd8de);
+  --p-on-accent: light-dark(#f5fcfd, #06191c);
+  --p-danger: light-dark(#b3261e, #ff8f87);
+  --p-danger-hover: light-dark(#93201a, #ffaaa3);
+  --p-danger-soft: light-dark(#fbe9e8, #3a1f1f);
+  --p-on-danger: light-dark(#fdf6f5, #2a0b0a);
+  --p-inverse-surface: light-dark(#12222b, #e3eef1);
+  --p-inverse-ink: light-dark(#f5fcfd, #0d1619);
+  --p-selection: light-dark(#cfe8ea, #1c454b);
+  --p-scrollbar: light-dark(#b3c4cc, #3c535c);
+  --p-scrollbar-hover: light-dark(#6a828e, #6f8893);
 
   /* Surfaces. There are three: the page, the panel, and the inset. Hover and pressed are the
      only other fills, so a page does not grow a stack of near-identical greys. */
@@ -58,7 +58,7 @@
   --ui-color-surface-sunken: var(--p-sunken);
   --ui-color-surface-hover: var(--p-hover);
   --ui-color-surface-active: var(--p-active);
-  --ui-color-overlay: light-dark(rgb(35 27 18 / 0.32), rgb(0 0 0 / 0.62));
+  --ui-color-overlay: light-dark(rgb(8 24 32 / 0.34), rgb(0 0 0 / 0.62));
 
   /* Text */
   --ui-color-ink: var(--p-ink);
@@ -100,8 +100,8 @@
   --ui-color-inverse-ink: var(--p-inverse-ink);
 
   /* Shadow: only overlays cast one. The page itself is flat. */
-  --ui-shadow-color-2: light-dark(rgb(46 32 20 / 0.18), rgb(0 0 0 / 0.6));
-  --ui-shadow-1: 0 1px 2px light-dark(rgb(46 32 20 / 0.08), rgb(0 0 0 / 0.45));
+  --ui-shadow-color-2: light-dark(rgb(10 34 46 / 0.18), rgb(0 0 0 / 0.6));
+  --ui-shadow-1: 0 1px 2px light-dark(rgb(10 34 46 / 0.08), rgb(0 0 0 / 0.45));
   --ui-shadow-2: 0 10px 28px var(--ui-shadow-color-2);
 
   /* Type */
@@ -166,7 +166,7 @@
   --ui-switch-height: 24px;
   --ui-switch-thumb: 18px;
   --ui-switch-travel: 16px;
-  --ui-color-switch-thumb: light-dark(#fffcf6, #f4efe5);
+  --ui-color-switch-thumb: light-dark(#f8fbfc, #e3eef1);
   --ui-disabled-opacity: 0.45;
 
   /* Focus: one ring, everywhere. */

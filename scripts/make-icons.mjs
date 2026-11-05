@@ -17,11 +17,11 @@ const mark = readFileSync(join(PUBLIC, 'favicon.svg'), 'utf8')
 const glyph = mark
   .replace(/<style>.*?<\/style>/, '')
   .replace(/<rect[^>]*\/>/, '')
-  .replace(/<path/, '<path fill="#fffaf2"')
+  .replace(/<path/, '<path fill="#f5fcfd"')
 
-const INK = '#1e1b17'
-const PAPER = '#f4efe5'
-const ACCENT = '#b23a1e'
+const INK = '#12222b'
+const PAPER = '#eaf0f2'
+const ACCENT = '#0a6c74'
 
 function browserPath() {
   const cache = join(homedir(), '.cache/ms-playwright')
@@ -70,7 +70,7 @@ const card = await shot(`
     h1{margin:0;font-size:60px;line-height:1.12;letter-spacing:-.01em}
     .mark{display:flex;align-items:center;gap:18px;margin-bottom:26px}
     .mark img{width:76px;height:76px;border-radius:14px}
-    .lead{margin:18px 0 0;font-size:27px;line-height:1.4;color:#4a443b;max-width:19em;font-family:system-ui,sans-serif}
+    .lead{margin:18px 0 0;font-size:27px;line-height:1.4;color:#344a56;max-width:19em;font-family:system-ui,sans-serif}
     .glyphs{font-family:"Alari Xuwasun Jurchen";font-size:96px;line-height:1.05;color:${ACCENT};
       display:grid;grid-template-columns:repeat(2,96px);gap:8px 18px;justify-content:center}
   </style>
