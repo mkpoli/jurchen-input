@@ -46,3 +46,9 @@ SITE_URL=http://localhost:5198 bun run check:site   # every page and flow in Chr
 ```
 
 The added code is MIT; see `LICENSE`. The design system is in `design/`.
+
+## Sponsor
+
+I build jurchen-input on my own, with no funding behind it, and it's free for everyone. If it's useful to you, a tip on [Ko-fi](https://ko-fi.com/mkpoli) or [OFUSE](https://ofuse.me/mkpoli) gives me time to keep improving it. Companies interested in sponsoring can write to mkpoli@mkpo.li.
+
+[![Support me on Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/mkpoli)

@@ -265,6 +265,24 @@ await step('settings: the language switch reads the catalogue', async () => {
   }
 })
 
+await step('the sponsor dialog offers both tips, OFUSE first in Japanese, and Escape closes it', async () => {
+  const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, locale: 'en-US' })
+  const sponsor = await context.newPage()
+  for (const [lang, order] of [['en', ['Ko-fi', 'OFUSE']], ['ja', ['OFUSE', 'Ko-fi']]]) {
+    await sponsor.goto(`${SITE}/?lang=${lang}`, { waitUntil: 'load' })
+    const trigger = sponsor.locator('button.sponsor')
+    await trigger.click()
+    const dialog = sponsor.locator('dialog.sponsor-dialog')
+    await dialog.locator('.tip').first().waitFor()
+    assert.deepEqual(await dialog.locator('.tip strong').allTextContents(), order)
+    assert.equal(await dialog.locator('supporters-roll').count(), 1, 'the supporters roll is in the dialog')
+    await sponsor.keyboard.press('Escape')
+    assert.equal(await dialog.evaluate(element => /** @type {HTMLDialogElement} */ (element).open), false, 'Escape closes it')
+    assert.equal(await trigger.evaluate(element => element === document.activeElement), true, 'focus returns to the button')
+  }
+  await context.close()
+})
+
 await browser.close()
 console.log(`${passed} passed, ${failed.length} failed`)
 if (failed.length) process.exit(1)
