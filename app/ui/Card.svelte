@@ -22,6 +22,14 @@
   const radicalChar = $derived(entry ? ix.radicals[entry.radical - 1] : '')
   const under = $derived(ready && number ? ix.byRadical.get(number) ?? [] : [])
   const sameReading = $derived(entry?.reading ? ix.readings.filter(other => other.raw === entry?.reading && other.char !== base).map(other => other.char) : [])
+  const origins = $derived(ready && base ? ix.origins.get(base) ?? [] : [])
+  /** The works an origin is cited to. */
+  const WORKS = /** @type {Record<string, { label: string, url: string }>} */ ({
+    n5261r: { label: 'card.origin.cite.n5261r', url: 'https://www.unicode.org/L2/L2024/24139-n5261r-jurchen-ideographs.pdf' },
+    kiyose: { label: 'card.origin.cite.kiyose', url: 'https://www.chikyukotobamura.org/muse/wr_easia_9.html' },
+    west2012: { label: 'card.origin.cite.west2012', url: 'https://www.babelstone.co.uk/Blog/2012/12/one-to-twenty-in-jurchen-khitan-and-lute.html' },
+    jinjin1980: { label: 'card.origin.cite.jinjin1980', url: 'https://archive.org/download/Khitan-et-Jurchen-languages/%E5%A5%B3%E7%9C%9F%E8%AF%AD%E8%A8%80%E6%96%87%E5%AD%97%E7%A0%94%E7%A9%B6.pdf#page=67' },
+  })
   const address = $derived(char ? `${location.origin}${link('', char)}` : '')
 </script>
 
@@ -92,6 +100,22 @@
     {/if}
 
     {#if entry}
+      <section>
+        <h3 class="ui-label">{t('card.origin')}</h3>
+        {#if origins.length || entry.numeric !== null}
+          <ul class="origins">
+            {#each origins as origin (`${origin.relation}${origin.work}`)}
+              <li>{t(`card.origin.${origin.relation}`, { char: origin.source })} <a href={WORKS[origin.work].url}>{t(WORKS[origin.work].label)}</a></li>
+            {/each}
+            {#if entry.numeric !== null}
+              <li>{t('card.origin.numeral')} <a href={WORKS.kiyose.url}>{t(WORKS.kiyose.label)}</a>, <a href={WORKS.west2012.url}>{t(WORKS.west2012.label)}</a></li>
+            {/if}
+          </ul>
+        {:else}
+          <p class="ui-hint">{t('card.origin.none')}</p>
+        {/if}
+      </section>
+
       <section>
         <h3 class="ui-label">{t('card.record')}</h3>
         <table class="readings">
@@ -164,6 +188,7 @@
   .readings td{padding:var(--ui-space-2xs) 0;font-family:var(--ui-font-serif);font-size:var(--ui-text-md)}
   .readings td.cjk{font-family:var(--ui-font-sans);font-size:var(--ui-text-sm)}
   .readings tr + tr{border-top:1px solid var(--ui-color-border)}
+  .origins{display:grid;gap:var(--ui-space-xs);margin:0;padding-inline-start:1.1em;font-size:var(--ui-text-sm);line-height:var(--ui-leading-normal)}
   .rel{gap:3px}
   .rel .ui-tile[data-open]{background:var(--ui-color-accent-soft)}
   .rel .ui-tile-note{font-size:var(--ui-text-2xs)}

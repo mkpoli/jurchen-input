@@ -88,6 +88,26 @@ describe('stroke codes', () => {
   })
 })
 
+describe('character origins', () => {
+  test('hold only cited statements about characters with these readings', () => {
+    expect(ix.origins.get('\u{19049}')).toEqual([{ relation: 'jin-identical', source: '一', work: 'n5261r' }, { relation: 'chinese-meaning', source: '一', work: 'jinjin1980' }])
+    expect(ix.origins.get('\u{18F7A}')?.map(origin => origin.work)).toEqual(['n5261r', 'kiyose', 'kiyose', 'jinjin1980'])
+    expect(ix.origins.get('\u{190BD}')).toEqual([{ relation: 'chinese-sound', source: '舍', work: 'jinjin1980' }])
+    const readings = { '18F7A': 'inəŋgi', '190FA': 'bia', 19049: 'əmu', '1904A': 'dʒo', '18E16': 'abxa', 19012: 'ania', 19171: 'tasxa', '18EDB': 'bəje', '18F65': 'mudu', '1906F': 'nialma', '1907C': 'dondi', '190FB': 'duli', 19182: 'xutu' }
+    expect(ix.origins.size).toBe(37)
+    // The book's numerals agree with Unicode's numeric values.
+    for (const [source, value] of [['三', 3], ['六', 6], ['九', 9], ['十', 10], ['百', 100], ['萬', 10000]]) {
+      const char = ix.numerals.get(value)
+      expect(ix.origins.get(char ?? '')?.map(origin => origin.source)).toContain(source)
+    }
+    for (const [code, reading] of Object.entries(readings)) {
+      const char = String.fromCodePoint(parseInt(code, 16))
+      expect(ix.entries.get(char)?.reading).toBe(reading)
+      expect(ix.origins.has(char)).toBe(true)
+    }
+  })
+})
+
 describe('readings', () => {
   test('fold phonetic letters and plain ones alike', () => {
     expect(foldReading('tumən')).toBe(foldQuery('tumen'))
