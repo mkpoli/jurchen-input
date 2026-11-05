@@ -1,0 +1,9 @@
+node_modules
+dist/
+.wrangler/
+.svelte-check/
+*.log
+.DS_Store
+/shots/
+__pycache__/
+.playwright-mcp/
