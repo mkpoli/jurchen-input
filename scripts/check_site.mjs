@@ -41,7 +41,7 @@ async function step(name, check) {
   }
 }
 
-const PAGES = ['', 'strokes', 'draw', 'radicals?q=31', 'reading?q=tumen', 'transcribe', 'about']
+const PAGES = ['', 'strokes', 'draw', 'radicals?q=31', 'reading?q=tumen', 'syllables', 'syllables?q=all', 'transcribe', 'about']
 const VIEWS = [
   { name: 'desktop', width: 1440, height: 900 },
   { name: 'phone', width: 390, height: 844 },
@@ -63,7 +63,7 @@ for (const view of VIEWS) for (const scheme of /** @type {const} */ (['light', '
       await page.evaluate(() => document.fonts.ready)
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)
       assert.ok(overflow <= 0, `the page is ${overflow}px wider than the screen`)
-      await page.screenshot({ path: join(SHOTS, `${view.name}-${scheme}-${(path.split('?')[0] || 'find')}.png`) })
+      await page.screenshot({ path: join(SHOTS, `${view.name}-${scheme}-${(path.replace('?q=', '-').replace(/-31|-tumen/, '') || 'find')}.png`) })
     })
   }
   assert.deepEqual(errors, [], errors.join('\n'))
@@ -145,6 +145,21 @@ await step('find: a number, a code point and pasted text', async () => {
   await page.goto(`${SITE}/?q=${encodeURIComponent('\u{19049}\u{1904A}')}`, { waitUntil: 'networkidle' })
   assert.equal(await page.locator('.ui-row').count(), 2)
   assert.match(await page.locator('.ui-row').first().innerText(), /əmu/)
+})
+
+await step('syllables: a reading stands at its initial and rime', async () => {
+  await page.goto(`${SITE}/syllables`, { waitUntil: 'networkidle' })
+  const heads = await page.locator('thead th').allInnerTexts()
+  assert.deepEqual(heads.slice(0, 3), ['-a', '-ə', '-e'])
+  const glyph = page.getByTitle(/^nie /)
+  assert.equal(await glyph.count(), 0, 'nie is a diphthong, away from the open syllables')
+  await page.getByRole('button', { name: 'Glides' }).click()
+  assert.match(page.url(), /q=glide/)
+  await page.getByTitle(/^nie · U\+18E00/).click()
+  assert.match(page.url(), /c=18E00/)
+  await page.getByRole('button', { name: 'All', exact: true }).click()
+  assert.ok(await page.locator('thead th').count() > 30)
+  assert.equal(await page.getByTitle(/^tumən /).count(), 0, 'a word of two syllables stays out')
 })
 
 await step('radicals: choosing one lists its characters', async () => {
