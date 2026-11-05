@@ -1,0 +1,24 @@
+/* The app layer: the design system, the face, and the one thing the system cannot know, which
+   family draws Jurchen. Everything else lives in design/. */
+@import '../design/index.css';
+@import './fonts.css';
+
+/* A field can hold Jurchen, Latin or Chinese; the face claims only its own blocks, so one stack
+   serves all three. */
+.ui-input,
+.ui-textarea,
+.field,
+.menu-input {
+  font-family: var(--ui-font-script);
+}
+
+:root {
+  --ui-font-script: 'Alari Xuwasun Jurchen', serif;
+  --topbar-h: 54px;
+  --writing-h: 62px;
+}
+
+/* A toast names the character it just handled. */
+.ui-toast {
+  font-family: var(--ui-font-sans), 'Alari Xuwasun Jurchen';
+}
