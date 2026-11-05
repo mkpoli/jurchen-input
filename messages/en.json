@@ -122,7 +122,7 @@
   "card.origin.jin-identical": "Written as Chinese {char} in Jin inscriptions. The Ming vocabulary adds a stroke or dot.",
   "card.origin.imitates": "Clearly imitates the regular script of Chinese {char}.",
   "card.origin.khitan": "Set beside the Khitan large script character for {char}. Study of this link is still at an early stage.",
-  "card.origin.numeral": "Thought, like all Jurchen numerals, to be a modified Chinese character (Kiyose). West finds only some based on the Chinese number, and none plainly from Khitan.",
+  "card.origin.numeral": "Thought, like all Jurchen numerals, to be a modified Chinese character (Kiyose). West finds some based on the Chinese number, and none plainly from Khitan.",
   "card.origin.none": "No source open to this site says where this character comes from.",
   "card.origin.cite.n5261r": "West and Sun 2024",
   "card.origin.cite.kiyose": "Kiyose",
