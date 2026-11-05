@@ -53,13 +53,13 @@ analyze(text)                               // what the text uses, and the codes
 |---|---|
 | `toUnicode` | Reads Zhonghua Ziku codes always, and BabelStone's with `{ babelstone: true }` |
 | `fromBabelStone`, `fromZhonghuaZiku` | Reads one encoding, changing nothing else |
-| `toBabelStone`, `toZhonghuaZiku` | Writes one encoding. A character with no code stays, and a variant selector is dropped |
+| `toBabelStone`, `toZhonghuaZiku` | Writes one encoding. A variant selector goes with its character, and a character with no code stays whole |
 | `stripVariants` | Removes Alari's variant selectors |
 | `analyze` | Counts each encoding, and lists Private Use characters with no table entry |
 
 Limits:
 
-- **U+E000–U+F8FF is shared.** Other fonts use it too, so `toUnicode` reads it only when asked.
+- **U+E000–U+F8FF is shared.** Other fonts use it too, among them BabelStone's Jurchen Small, so `toUnicode` reads it only when asked.
 - **Some codes stay.** Four BabelStone codes have no link, U+E6F4 needs its font, and two Zhonghua Ziku codes name two characters each.
 - **Forms are lost.** An older code names a drawn form, and the result keeps the character.
 - **Writing is one-way for shared characters.** A character with several older codes writes the first.

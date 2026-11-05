@@ -46,6 +46,7 @@ describe('writing older encodings', () => {
     const chars = readFileSync('data/encodings/characters.tsv', 'utf8').trim().split('\n').slice(1).map(line => line.split('\t'))
     const none = ch(/** @type {string[]} */ (chars.find(row => !row[4]))[0])
     expect(toZhonghuaZiku(none)).toBe(none)
+    expect(toZhonghuaZiku(`${none}\uFE00`)).toBe(`${none}\uFE00`)
     expect(stripVariants('\u{18E01}︀︀')).toBe('\u{18E01}︀')
   })
 })

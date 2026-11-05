@@ -79,15 +79,15 @@ function write(text, table) {
 }
 
 /**
- * Write BabelStone's code points. A character with no code stays as Unicode, and a variant selector
- * goes with the character it follows.
+ * Write BabelStone's code points. A variant selector goes with the character it follows, and a
+ * character with no code stays as Unicode, with its selector.
  * @param {string} text
  */
 export const toBabelStone = text => write(text, TO_BABELSTONE)
 
 /**
- * Write the Zhonghua Ziku font's code points. A character with no code stays as Unicode, and a
- * variant selector goes with the character it follows.
+ * Write the Zhonghua Ziku font's code points. A variant selector goes with the character it follows,
+ * and a character with no code stays as Unicode, with its selector.
  * @param {string} text
  */
 export const toZhonghuaZiku = text => write(text, TO_ZHZK)
