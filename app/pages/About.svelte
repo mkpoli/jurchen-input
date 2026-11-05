@@ -21,6 +21,8 @@
       <dd>{@html t('about.font')}</dd>
       <dt>{t('about.variantsTitle')}</dt>
       <dd>{@html t('about.variants')}</dd>
+      <dt>{t('about.originTitle')}</dt>
+      <dd>{t('about.origin')}</dd>
       <dt>{t('about.missingTitle')}</dt>
       <dd>{t('about.missing')}</dd>
     </dl>

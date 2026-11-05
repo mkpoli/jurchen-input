@@ -88,6 +88,20 @@ describe('stroke codes', () => {
   })
 })
 
+describe('character origins', () => {
+  test('hold only cited statements about characters with these readings', () => {
+    expect(ix.origins.get('\u{19049}')).toEqual([{ relation: 'jin-identical', source: '一', work: 'n5261r' }])
+    expect(ix.origins.get('\u{18F7A}')?.map(origin => origin.work)).toEqual(['n5261r', 'kiyose', 'kiyose'])
+    const readings = { '18F7A': 'inəŋgi', '190FA': 'bia', 19049: 'əmu', '1904A': 'dʒo', '18E16': 'abxa', 19012: 'ania', 19171: 'tasxa', '18EDB': 'bəje', '18F65': 'mudu', '1906F': 'nialma', '1907C': 'dondi', '190FB': 'duli', 19182: 'xutu' }
+    expect(ix.origins.size).toBe(13)
+    for (const [code, reading] of Object.entries(readings)) {
+      const char = String.fromCodePoint(parseInt(code, 16))
+      expect(ix.entries.get(char)?.reading).toBe(reading)
+      expect(ix.origins.has(char)).toBe(true)
+    }
+  })
+})
+
 describe('readings', () => {
   test('fold phonetic letters and plain ones alike', () => {
     expect(foldReading('tumən')).toBe(foldQuery('tumen'))

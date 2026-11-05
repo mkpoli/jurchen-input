@@ -3,7 +3,8 @@ import { baseOf, variantOf, isRadical } from './script.js'
 import { foldReading } from './reading.js'
 
 /** @typedef {{ char: string, radical: number, strokes: number, source: string, reading: string, numeric: number | null }} Entry */
-/** @typedef {{ unicode: string, table: { name: string, version: string, sha256: string }, rows: [string, number, number, string, string | null, number | null][], radicals: string[], codes: [string, string][] }} Records */
+/** @typedef {{ unicode: string, table: { name: string, version: string, sha256: string }, rows: [string, number, number, string, string | null, number | null][], radicals: string[], codes: [string, string][], origins: [string, string, string, string][] }} Records */
+/** What a source says about where a character comes from. @typedef {{ relation: string, source: string, work: string }} Origin */
 
 export const ix = {
   /** @type {Map<string, Entry>} */ entries: new Map(),
@@ -15,6 +16,7 @@ export const ix = {
   /** The characters under each radical number. @type {Map<number, string[]>} */ byRadical: new Map(),
   /** Stroke counts by sequence, a variant taking its base's. @type {Map<string, number>} */ strokes: new Map(),
   /** The numerals. @type {Map<number, string>} */ numerals: new Map(),
+  /** What the sources say about each character's origin. @type {Map<string, Origin[]>} */ origins: new Map(),
 }
 
 const order = (/** @type {string} */ a, /** @type {string} */ b) => (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0) || variantOf(a) - variantOf(b)
@@ -33,6 +35,8 @@ export function fill(records) {
   }
   for (const list of ix.forms.values()) list.sort(order)
   ix.readings = [...ix.entries.values()].filter(entry => entry.reading).map(entry => ({ char: entry.char, raw: entry.reading, folded: foldReading(entry.reading) }))
+  ix.origins = new Map()
+  for (const [char, relation, source, work] of records.origins) ix.origins.set(char, [...(ix.origins.get(char) ?? []), { relation, source, work }])
   ix.byRadical = new Map()
   ix.numerals = new Map()
   ix.strokes = new Map()

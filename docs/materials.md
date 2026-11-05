@@ -13,6 +13,11 @@ Retrieved 2026-11-05 unless noted.
 | Alari (Sulfa & Ayasala), 「没人给女真文做字体和输入法？那我们自己来」, [WeChat article](https://mp.weixin.qq.com/s/YaUP6bq4xt_18ywlRxCQpA), read from a copy of its text, since the page refuses automated fetches; its date was not seen | the stroke definitions on the Strokes page, the account of how the font and variants were made | cited | `app/pages/Strokes.svelte` |
 | 柳突破, 「Alari 仿宋女真文字体快闪，庆祝女真文正式入U」, [Bilibili](https://www.bilibili.com/video/BV1odec6pEqp/), 2026-09-16 | points to the download site | cited | none |
 
+| [WG2 N5261R](https://www.unicode.org/L2/L2024/24139-n5261r-jurchen-ideographs.pdf), Andrew West, Sun Bojun and the Zhonghua Ziku project, 2024-06-12, Table 3 | four characters written as the Chinese character of the same meaning in Jin inscriptions | cited | `data/etymology/origins.tsv` |
+| Kiyose Gizaburō Norifu 清瀬義三郎則府, 「女真文字」, [地球ことば村](https://www.chikyukotobamura.org/muse/wr_easia_9.html), updated 2022-06-18 | figures of characters imitating Chinese regular script and of Jurchen beside Khitan large script; the statement on numerals | cited | `data/etymology/origins.tsv` |
+| Andrew West, [One to Twenty in Jurchen, Khitan and Lute](https://www.babelstone.co.uk/Blog/2012/12/one-to-twenty-in-jurchen-khitan-and-lute.html), BabelStone blog, 2012-12-18 | the contrary view on numerals | cited | card text |
+| Andrew West, [Index to Jin Qizong's dictionary](https://www.babelstone.co.uk/Jurchen/JQZ1984_Index.html) | gloss and page, used to tie Kiyose's figures to code points | used as a lookup, not redistributed | `data/etymology/origins.tsv` |
+
 SHA-256 of the files as downloaded:
 
 - `Alari_jurc.dict.yaml`: `16952da9ea874bf2418fef63febdc8fca3e9322adab97c4a38181b0dd684bca4`
@@ -35,6 +40,16 @@ Variant sequences: `StandardizedVariants.txt` of Unicode 18.0 has no Jurchen ent
 the core specification does not mention them. The sequences here are Alari's convention. In the font,
 each of the 537 agrees with the matching style set (`ss01`–`ss05`); this was checked on the font's own
 tables.
+
+## Character origins
+
+`data/etymology/origins.tsv` holds only what a source states of a named character: 13 characters. Everything else on the card says no source is available, which says nothing about whether one exists in print.
+
+- **Table 3 of N5261R** names its four characters by code point.
+- **Kiyose's figures** print glyphs with a Chinese gloss and no code point. Each was tied to a code point through West's index of Jin 1984, gloss and page leading to a reading, and the glyph then compared by eye with the Alari form. The tie is this site's work. U+18E16 differs most: the figure has the semi-cursive Ming form N5261R describes.
+- **Left out of Kiyose's figures:** 金 and 枝, where the index leads to a character with another shape, and 生, 未, 蒙 and 太, where it leads to none. His 春夏秋冬, 東西南北 and bun/bitxə examples are also out, for lack of a reliable tie to a code point.
+- **Numerals.** Kiyose says all are modified Chinese characters, naming none. West (2012) says the forms are not obviously from Khitan and that some follow the Chinese number. Kane 1989, Table 6 sets them side by side ([scan on BabelStone](https://www.babelstone.co.uk/Jurchen/Kane_21.jpg)). The card reports the disagreement and assigns no individual source.
+- **Not available here:** Kane 1989, pp. 21–24, which Wikipedia cites on derivation, and Jin Guangping and Jin Qizong 1980, ch. 3, which a Zhihu answer (seen only as a search summary; the page refuses automated fetches) points to for examples. A character-by-character table would have to come from these.
 
 ## Found, not used
 
