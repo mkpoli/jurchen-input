@@ -19,12 +19,14 @@ The links, all from the two proposals:
   under MATCH is not accepted. N5207, Table 6 keeps some of the same glyphs as text in private-use
   code points, an independent reading of the same link, and the build reports where the two differ.
 
-The PDFs and fonts are downloaded to cache/ and checked against their digests.
+The PDFs and fonts are downloaded to cache/ and must match the digests in data/encodings/SOURCES.txt.
+`--update-sources` records new digests instead, for a deliberate change of source.
 """
 import collections
 import csv
 import hashlib
 import re
+import sys
 import urllib.request
 from pathlib import Path
 
@@ -67,6 +69,20 @@ def fetch(url):
 
 def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def check_sources():
+    """Stop if a downloaded file is not the one the tables were built from."""
+    urls = {**DOCS, **{key: url for key, (_, url) in FONTS.items()}}
+    current = {key: (url, digest(fetch(url))) for key, url in urls.items()}
+    record = OUT / 'SOURCES.txt'
+    if '--update-sources' not in sys.argv and record.exists():
+        pinned = dict(line.split('\t')[0::2] for line in record.read_text(encoding='utf-8').splitlines())
+        changed = [key for key, (_, sha) in current.items() if pinned.get(key) != sha]
+        if changed:
+            raise SystemExit(f'{changed} differ from data/encodings/SOURCES.txt; rerun with --update-sources to accept them')
+    OUT.mkdir(parents=True, exist_ok=True)
+    record.write_text(''.join(f'{key}\t{url}\t{sha}\n' for key, (url, sha) in current.items()), encoding='utf-8')
 
 
 def spans(page):
@@ -221,6 +237,7 @@ def write(path, header, rows):
 
 
 def main():
+    check_sources()
     n5207 = pymupdf.open(fetch(DOCS['n5207']))
     n5261r = pymupdf.open(fetch(DOCS['n5261r']))
     paths = {key: fetch(url) for key, (_, url) in FONTS.items()}
@@ -324,9 +341,6 @@ def main():
         rows.append((code, ' '.join(e.rstrip('*') for e in row['entries']), ' '.join(row['xrefs']),
                      ' '.join(babelstone.get(code, [])), ' '.join(zhzk.get(code, [])), ' '.join(drafts)))
     write(OUT / 'characters.tsv', ('unicode', 'jin1984', 'xrefs', 'babelstone', 'zhzk', 'n5207_draft'), rows)
-    with (OUT / 'SOURCES.txt').open('w', encoding='utf-8') as out:
-        for key, url in {**DOCS, **{k: u for k, (_, u) in FONTS.items()}}.items():
-            out.write(f'{key}\t{url}\t{digest(fetch(url))}\n')
     counts = collections.Counter((row[0], row[4]) for row in legacy)
     print(sorted(counts.items()))
     print('characters with a BabelStone code', len(babelstone), 'with a Zhonghua Ziku code', len(zhzk))
