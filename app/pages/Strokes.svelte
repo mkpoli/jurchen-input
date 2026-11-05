@@ -58,6 +58,18 @@
     setQuery(code)
   }
 
+  /** Read the box once a composition is over, and show what the code kept with the caret in place.
+   * @param {(InputEvent | CompositionEvent) & { currentTarget: HTMLInputElement }} event */
+  function typed(event) {
+    if (event instanceof InputEvent && event.isComposing) return
+    const field = event.currentTarget
+    const caret = clean(field.value.slice(0, field.selectionStart ?? 0)).length
+    setCode(field.value)
+    if (field.value === code) return
+    field.value = code
+    field.setSelectionRange(caret, caret)
+  }
+
   /** @param {number} index */
   function commit(index) {
     const hit = shown[index]
@@ -108,7 +120,7 @@
     <div class="box">
       <input bind:this={input} data-primary class="ui-input code-input ui-mono" value={code} spellcheck="false" autocomplete="off" autocapitalize="off"
         inputmode={touch ? 'none' : 'text'} aria-label={t('strokes.label')} placeholder={t('strokes.placeholder')}
-        oninput={(/** @type {Event & { currentTarget: HTMLInputElement }} */ event) => { setCode(event.currentTarget.value); event.currentTarget.value = code }} onkeydown={keys} use:autofocus />
+        oninput={typed} oncompositionend={typed} onkeydown={keys} use:autofocus />
       <span class="ui-count count" role="status">{#if code}{hits.length ? t('common.characters', { count: hits.length }) : t('strokes.none')}{/if}</span>
     </div>
 
