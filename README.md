@@ -17,6 +17,7 @@ check its record, and put it into your text.
 - **Reading**: the readings of Jin Qizong's dictionary, with phonetic letters or plain ones.
 - **Syllables**: the one-syllable readings laid out like a kana chart, by initial and rime.
 - **Transcribe**: the text with the reading of each character under it.
+- **Convert**: text in an older font's Private Use codes, turned into Unicode 18, and back.
 
 The card of a character shows its code points, stroke code, variant forms, reading, numeric value
 and source reference. The text stays in the browser and copies as text, code points, stroke codes,
@@ -34,6 +35,38 @@ Every source, with what it gives and its terms, is in [`docs/materials.md`](docs
 
 No data from CCAMC (ccamc.org, ccamc.co) is used, and neither is the reference font of the Unicode
 code charts.
+
+## Converting older text
+
+Jurchen text from before Unicode 18 sits in the Private Use codes of its font. `src/index.js` reads two of those encodings; nothing else in the repository needs a build to use it.
+
+```js
+import { analyze, fromBabelStone, toUnicode, toZhonghuaZiku } from './src/index.js'
+
+toUnicode('\u{F1C72}')                      // '\u{18E01}', from the Zhonghua Ziku font
+toUnicode('\uE004', { babelstone: true })   // '\u{18E01}', from BabelStone's scan fonts
+fromBabelStone('\uE6F4', { font: 'toyo' })  // '\u{1905C}': this code differs by font
+toZhonghuaZiku('\u{18E01}')                 // '\u{F1C72}', back
+analyze(text)                               // what the text uses, and the codes it cannot read
+```
+
+| Function | Does |
+|---|---|
+| `toUnicode` | Reads Zhonghua Ziku codes always, and BabelStone's with `{ babelstone: true }` |
+| `fromBabelStone`, `fromZhonghuaZiku` | Reads one encoding, changing nothing else |
+| `toBabelStone`, `toZhonghuaZiku` | Writes one encoding. A variant selector goes with its character, and a character with no code stays whole |
+| `stripVariants` | Removes Alari's variant selectors |
+| `analyze` | Counts each encoding, and lists Private Use characters with no table entry |
+
+Limits:
+
+- **U+E000–U+F8FF is shared.** Other fonts use it too, among them BabelStone's Jurchen Small, so `toUnicode` reads it only when asked.
+- **Some codes stay.** Four BabelStone codes have no link, U+E6F4 needs its font, and two Zhonghua Ziku codes name two characters each.
+- **Forms are lost.** An older code names a drawn form, and the result keeps the character.
+- **Writing is one-way for shared characters.** A character with several older codes writes the first.
+- **CCAMC's encoding is not read.**
+
+The tables, and how each link was made, are in `data/encodings/` and [`docs/materials.md`](docs/materials.md). `bun run build:encodings` rebuilds them from the proposals, and `bun run build:legacy-map` generates `src/legacy-map.js`.
 
 ## Development
 

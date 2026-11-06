@@ -23,6 +23,10 @@ export const GROUPS = /** @type {const} */ ([
       { path: 'transcribe', label: 'nav.transcribe', hint: 'nav.transcribe.hint' },
     ],
   },
+  {
+    label: 'nav.group.convert',
+    pages: [{ path: 'convert', label: 'nav.convert', hint: 'nav.convert.hint' }],
+  },
 ])
 
 /** @typedef {typeof PRIMARY | typeof GROUPS[number]['pages'][number]} PageEntry */

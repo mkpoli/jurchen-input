@@ -41,7 +41,7 @@ async function step(name, check) {
   }
 }
 
-const PAGES = ['', 'strokes', 'draw', 'radicals?q=31', 'reading?q=tumen', 'syllables', 'syllables?q=all', 'transcribe', 'about']
+const PAGES = ['', 'strokes', 'draw', 'radicals?q=31', 'reading?q=tumen', 'syllables', 'syllables?q=all', 'transcribe', `convert?q=${encodeURIComponent('\uE3C7\uE004\u{F1C72}\uE6F4\uE0DC')}`, 'about']
 const VIEWS = [
   { name: 'desktop', width: 1440, height: 900 },
   { name: 'phone', width: 390, height: 844 },
@@ -63,7 +63,7 @@ for (const view of VIEWS) for (const scheme of /** @type {const} */ (['light', '
       await page.evaluate(() => document.fonts.ready)
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)
       assert.ok(overflow <= 0, `the page is ${overflow}px wider than the screen`)
-      await page.screenshot({ path: join(SHOTS, `${view.name}-${scheme}-${(path.replace('?q=', '-').replace(/-31|-tumen/, '') || 'find')}.png`) })
+      await page.screenshot({ path: join(SHOTS, `${view.name}-${scheme}-${(path.replace(/\?q=.*/, m => (m === '?q=all' ? '-all' : '')) || 'find')}.png`) })
     })
   }
   assert.deepEqual(errors, [], errors.join('\n'))
@@ -152,6 +152,29 @@ await step('find: a reference from before Unicode 18', async () => {
     await page.goto(`${SITE}/?q=${encodeURIComponent(query)}`, { waitUntil: 'networkidle' })
     assert.equal(await page.locator('.ui-tile .ui-script').first().textContent(), '\u{18E01}', query)
   }
+})
+
+await step('convert: older codes become Unicode, and what cannot be read is listed', async () => {
+  await page.goto(`${SITE}/convert`, { waitUntil: 'networkidle' })
+  const box = page.locator('[data-primary]')
+  await box.fill('a\uE3C7\uE004\u{F1C72}\uE0DC')
+  assert.equal(await page.locator('output').textContent(), 'a\u{19049}\u{18E01}\u{18E01}\uE0DC')
+  assert.match(await page.locator('.codes').innerText(), /U\+E0DC/)
+  await page.getByRole('checkbox').first().uncheck()
+  assert.equal(await page.locator('output').textContent(), 'a\uE3C7\uE004\u{18E01}\uE0DC')
+  await page.getByRole('checkbox').first().check()
+  await box.fill('\uE6F4')
+  assert.equal(await page.locator('output').textContent(), '\uE6F4')
+  await page.locator('.option select').nth(1).selectOption('toyo')
+  assert.equal(await page.locator('output').textContent(), '\u{1905C}')
+  await box.fill('\u{18E01}')
+  await page.locator('.option select').first().selectOption('zhzk')
+  assert.equal(await page.locator('output').textContent(), '\u{F1C72}')
+  await page.screenshot({ path: join(SHOTS, 'flow-convert.png') })
+  // U+E282 is U+18F95, which has no Zhonghua Ziku code: the result cannot be complete, and says so.
+  await box.fill('\uE282')
+  assert.equal(await page.locator('output').textContent(), '\u{18F95}')
+  assert.match(await page.locator('.codes').innerText(), /U\+18F95/)
 })
 
 await step('syllables: a reading stands at its initial and rime', async () => {

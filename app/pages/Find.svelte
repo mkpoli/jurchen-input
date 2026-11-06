@@ -71,6 +71,7 @@
     { page: 'reading', title: 'nav.reading', body: 'find.door.reading', glyph: '\u{19129}' },
     { page: 'syllables', title: 'nav.syllables', body: 'find.door.syllables', glyph: '\u{18F7A}' },
     { page: 'transcribe', title: 'nav.transcribe', body: 'find.door.transcribe', glyph: MARK },
+    { page: 'convert', title: 'nav.convert', body: 'find.door.convert', glyph: '\u{19049}' },
   ])
 
   /** @type {{ value: string, script?: boolean, mono?: boolean }[]} */
