@@ -52,6 +52,9 @@ describe('writing older encodings', () => {
 })
 
 describe('analyze', () => {
+  test('counts a radical as Jurchen', () => {
+    expect(analyze('\u{191A0}').unicode).toBe(1)
+  })
   test('counts what the text is written with', () => {
     expect(analyze('\u{18E01}︀\u{F1C72}a')).toEqual({ unicode: 1, variants: 1, babelstone: 2, zhzk: 1, unknown: [''], fontSpecific: [''] })
   })

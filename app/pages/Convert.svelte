@@ -23,7 +23,7 @@
   const left = $derived.by(() => {
     if (direction === 'unicode') return [...new Set(output.match(/[\uE000-\uF8FF\u{F0000}-\u{10FFFD}]/gu) ?? [])]
     const read = direction === 'babelstone' ? fromBabelStone : fromZhonghuaZiku
-    return [...new Set(output.match(/[\u{18E00}-\u{19191}]|[\uE000-\uF8FF\u{F0000}-\u{10FFFD}]/gu) ?? [])].filter(char => read(char) === char)
+    return [...new Set(output.match(/[\u{18E00}-\u{19191}\u{191A0}-\u{191D2}]|[\uE000-\uF8FF\u{F0000}-\u{10FFFD}]/gu) ?? [])].filter(char => read(char) === char)
   })
   const needsFont = $derived(babelstone && !font && found.fontSpecific.length > 0)
 
