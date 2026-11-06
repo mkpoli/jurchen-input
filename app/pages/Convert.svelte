@@ -1,7 +1,7 @@
 <script>
   // Convert: text stored in an older font's Private Use codes, turned into Unicode 18, and back. Codes
   // with no known character stay in the result and are listed.
-  import { analyze, fromBabelStone, fromZhonghuaZiku, toBabelStone, toUnicode, toZhonghuaZiku } from '../../src/index.js'
+  import { analyze, fromBabelStone, fromCcamc, fromZhonghuaZiku, toBabelStone, toCcamc, toUnicode, toZhonghuaZiku } from '../../src/index.js'
   import { codePoint } from '../lib/script.js'
   import { route, setQuery } from '../lib/route.svelte.js'
   import { autofocus } from '../lib/ui.svelte.js'
@@ -10,20 +10,22 @@
   import { t } from '../lib/i18n.svelte.js'
 
   let input = $state(route.q)
-  let direction = $state(/** @type {'unicode' | 'babelstone' | 'zhzk'} */ ('unicode'))
+  let direction = $state(/** @type {'unicode' | 'babelstone' | 'zhzk' | 'ccamc'} */ ('unicode'))
   let babelstone = $state(true)
+  let ccamc = $state(true)
   let font = $state(/** @type {'' | 'toyo' | 'tianyige'} */ (''))
 
-  const options = $derived({ babelstone, font: font || undefined })
+  const options = $derived({ babelstone, ccamc, font: font || undefined })
   const unicode = $derived(toUnicode(input, options))
-  const output = $derived(direction === 'unicode' ? unicode : direction === 'babelstone' ? toBabelStone(unicode) : toZhonghuaZiku(unicode))
+  const WRITE = { unicode: (/** @type {string} */ text) => text, babelstone: toBabelStone, zhzk: toZhonghuaZiku, ccamc: toCcamc }
+  const output = $derived(WRITE[direction](unicode))
   const found = $derived(analyze(input))
   // What the result holds that it should not: any Private Use code once it should be Unicode, and
   // once it should be one older encoding, any character or code outside that encoding.
   const left = $derived.by(() => {
     if (direction === 'unicode') return [...new Set(output.match(/[\uE000-\uF8FF\u{F0000}-\u{10FFFD}]/gu) ?? [])]
-    const read = direction === 'babelstone' ? fromBabelStone : fromZhonghuaZiku
-    return [...new Set(output.match(/[\u{18E00}-\u{19191}]|[\uE000-\uF8FF\u{F0000}-\u{10FFFD}]/gu) ?? [])].filter(char => read(char) === char)
+    const read = { babelstone: fromBabelStone, zhzk: fromZhonghuaZiku, ccamc: fromCcamc }[direction]
+    return [...new Set(output.match(/[\u{18E00}-\u{19191}\u{191A0}-\u{191D2}]|[\uE000-\uF8FF\u{F0000}-\u{10FFFD}]/gu) ?? [])].filter(char => read(char) === char)
   })
   const needsFont = $derived(babelstone && !font && found.fontSpecific.length > 0)
 
@@ -50,10 +52,12 @@
           <option value="unicode">{t('convert.to.unicode')}</option>
           <option value="babelstone">{t('convert.to.babelstone')}</option>
           <option value="zhzk">{t('convert.to.zhzk')}</option>
+          <option value="ccamc">{t('convert.to.ccamc')}</option>
         </select>
       </span>
     </label>
     <label class="ui-check-row"><input class="ui-checkbox" type="checkbox" bind:checked={babelstone} /> <span>{t('convert.readBabelstone')}</span></label>
+    <label class="ui-check-row"><input class="ui-checkbox" type="checkbox" bind:checked={ccamc} /> <span>{t('convert.readCcamc')}</span></label>
     {#if found.fontSpecific.length}
       <label class="option">
         <span class="ui-label">{t('convert.font')}</span>
@@ -74,7 +78,7 @@
     <section class="result" aria-label={t('convert.output')}>
       <div class="ui-section-head">
         <h2 class="ui-label">{t('convert.output')}</h2>
-        <span class="ui-count" role="status">{t('convert.stats', { unicode: found.unicode, babelstone: found.babelstone, zhzk: found.zhzk })}</span>
+        <span class="ui-count" role="status">{t('convert.stats', { unicode: found.unicode, babelstone: found.babelstone, zhzk: found.zhzk, ccamc: found.ccamc })}</span>
       </div>
       <output class="out" class:ui-script={scripted} lang={scripted ? 'juc' : undefined}>{output}</output>
       <div class="tools">

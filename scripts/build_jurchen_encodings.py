@@ -14,6 +14,9 @@ The links, all from the two proposals:
 
 - WG2 N5207, Table 7: X-reference to Zhonghua Ziku PUA, and to the draft code point of its Table 6.
 - WG2 N5261R, Table 4: Unicode code point to X-references and Jin 1984 entries.
+- CCAMC's Jurchen pages, which number each code point from N3788: U+EC9A onward runs from X-0001 to
+  X-1376 in order, U+F1FA onward are its radicals, and U+F22C onward are forms such as 72b. The numbers
+  of those forms read so far are in ccamc-serials.tsv, and the rest stay unconverted.
 - N5261R, Table 4, columns Berlin, Tokyo, Beijing and TYG: glyphs drawn with BabelStone's four scan
   fonts. The PDF holds them as images, so each is matched against every glyph of its font. A match
   under MATCH is not accepted. N5207, Table 6 keeps some of the same glyphs as text in private-use
@@ -38,6 +41,9 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = Path(__file__).resolve().parents[1]
 CACHE = ROOT / 'cache'
 OUT = ROOT / 'data/encodings'
+CCAMC_SERIALS = OUT / 'ccamc-serials.tsv'
+CCAMC_FIRST = 0xEC9A
+CCAMC_LAST_SERIAL = 1376
 UCD = ROOT / 'data/unicode/JurchenSources-18.0.0.txt'
 DOCS = {
     'n5207': 'https://www.unicode.org/wg2/docs/n5207-Jurchen.pdf',
@@ -220,6 +226,34 @@ def match_glyphs(document, banks):
     return hits
 
 
+def ccamc_radical(number):
+    """Unicode's radical for CCAMC's Rx number. Unicode splits its 23 in two, and CCAMC places the
+    radical Unicode numbers 31 last."""
+    if number <= 23:
+        radical = number
+    elif number <= 29:
+        radical = number + 1
+    elif number == 50:
+        radical = 31
+    else:
+        radical = number + 2
+    return f'{0x191A0 + radical - 1:05X}'
+
+
+def ccamc_rows(x_to_chars):
+    """Each CCAMC code point with the characters its N3788 number names."""
+    for number in range(1, CCAMC_LAST_SERIAL + 1):
+        x = f'X-{number:04d}'
+        yield f'{CCAMC_FIRST + number - 1:04X}', x_to_chars.get(x, []), x
+    for number in range(1, 51):
+        yield f'{0xF1FA + number - 1:04X}', [ccamc_radical(number)], f'Rx{number:03d}'
+    with CCAMC_SERIALS.open(encoding='utf-8', newline='') as source:
+        for row in csv.DictReader(source, delimiter='\t'):
+            found = re.fullmatch(r'(\d+)[a-z]', row['serial'])
+            x = f'X-{int(found.group(1)):04d}' if found else ''
+            yield row['ccamc'], x_to_chars.get(x, []), row['serial'] or 'no number'
+
+
 def ucd_records():
     found = {}
     for line in UCD.read_text(encoding='utf-8').splitlines():
@@ -332,6 +366,18 @@ def main():
         else:
             legacy.append(('zhzk', code, '', '', 'unmapped', '', f'{refs} not in Table 4'))
 
+    ccamc = collections.defaultdict(list)
+    for code, chars, note in ccamc_rows(x_to_chars):
+        if len(chars) == 1:
+            legacy.append(('ccamc', code, chars[0], '', 'serial', '', note))
+            ccamc[chars[0]].append(code)
+        elif chars:
+            legacy.append(('ccamc', code, '', '', 'ambiguous', '', f'{note} is listed under {" ".join(chars)}'))
+            for char in chars:
+                ccamc[char].append(code)
+        else:
+            legacy.append(('ccamc', code, '', '', 'unmapped', '', f'{note} has no character in Table 4'))
+
     OUT.mkdir(parents=True, exist_ok=True)
     write(OUT / 'legacy-map.tsv', ('encoding', 'legacy', 'unicode', 'fonts', 'evidence', 'score', 'note'), legacy)
     rows = []
@@ -339,8 +385,8 @@ def main():
         row = characters[code]
         drafts = sorted({x_table[x]['draft'] for x in row['xrefs'] if x in x_table and x_table[x]['draft']})
         rows.append((code, ' '.join(e.rstrip('*') for e in row['entries']), ' '.join(row['xrefs']),
-                     ' '.join(babelstone.get(code, [])), ' '.join(zhzk.get(code, [])), ' '.join(drafts)))
-    write(OUT / 'characters.tsv', ('unicode', 'jin1984', 'xrefs', 'babelstone', 'zhzk', 'n5207_draft'), rows)
+                     ' '.join(babelstone.get(code, [])), ' '.join(zhzk.get(code, [])), ' '.join(ccamc.get(code, [])), ' '.join(drafts)))
+    write(OUT / 'characters.tsv', ('unicode', 'jin1984', 'xrefs', 'babelstone', 'zhzk', 'ccamc', 'n5207_draft'), rows)
     counts = collections.Counter((row[0], row[4]) for row in legacy)
     print(sorted(counts.items()))
     print('characters with a BabelStone code', len(babelstone), 'with a Zhonghua Ziku code', len(zhzk))

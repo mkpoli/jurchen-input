@@ -70,7 +70,7 @@ def main():
     assert len(codes) == 1502 and len({text for text, _ in codes}) == 1502
     assert {ord(text[0]) for text, _ in codes} == set(CHARS) | set(RADICALS)
     with ENCODINGS.open(encoding='utf-8', newline='') as source_file:
-        encodings = [[chr(int(row['unicode'], 16)), row['jin1984'], row['xrefs'], row['babelstone'], row['zhzk'], row['n5207_draft']]
+        encodings = [[chr(int(row['unicode'], 16)), row['jin1984'], row['xrefs'], row['babelstone'], row['zhzk'], row['ccamc'], row['n5207_draft']]
                      for row in csv.DictReader(source_file, delimiter='\t')]
     assert len(encodings) == 914
     with ORIGINS.open(encoding='utf-8', newline='') as source_file:
