@@ -46,6 +46,8 @@ bunx vite preview app --port 5198 &
 SITE_URL=http://localhost:5198 bun run check:site   # every page and flow in Chromium, shots in shots/
 ```
 
+A push to `main` runs the tests, type check and build, then deploys to <https://jurchen.mkpo.li/>. It needs the repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`.
+
 The added code is MIT; see `LICENSE`. The design system is in `design/`.
 
 ## Sponsor
