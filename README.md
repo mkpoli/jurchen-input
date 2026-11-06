@@ -33,8 +33,8 @@ Every source, with what it gives and its terms, is in [`docs/materials.md`](docs
 - `app/public/fonts/AlariXuwasunJurchen-Regular.woff2`, built by `bun run build:font` from the OFL
   font in `data/alari/`.
 
-The site's records use no data from CCAMC (ccamc.org, ccamc.co), and no font from it or from the
-Unicode code charts. CCAMC's numbering of its own code points is used to read text in its encoding.
+From CCAMC (ccamc.org, ccamc.co) the site takes only its code points, shown on each card and read by
+the converter. It uses no font from CCAMC or from the Unicode code charts.
 
 ## Converting older text
 
