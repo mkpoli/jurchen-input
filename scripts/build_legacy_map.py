@@ -7,14 +7,14 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-babelstone, by_font, zhzk, ccamc = {}, {}, {}, {}
+babelstone, by_font, zhzk = {}, {}, {}
 with (ROOT / 'data/encodings/legacy-map.tsv').open(encoding='utf-8', newline='') as source:
     for row in csv.DictReader(source, delimiter='\t'):
         code = int(row['legacy'], 16)
         if row['evidence'] == 'font-specific':
             by_font[code] = {font: int(char, 16) for font, char in (pair.split('=') for pair in row['note'].split())}
         elif row['unicode']:
-            {'babelstone': babelstone, 'zhzk': zhzk, 'ccamc': ccamc}[row['encoding']][code] = int(row['unicode'], 16)
+            (babelstone if row['encoding'] == 'babelstone' else zhzk)[code] = int(row['unicode'], 16)
 
 
 def pairs(table):
@@ -26,8 +26,7 @@ def pairs(table):
     '// Each table is [legacy code point, Unicode code point] pairs.\n'
     f'export const BABELSTONE = /** @type {{[number, number][]}} */ ({pairs(babelstone)})\n'
     f'export const BABELSTONE_BY_FONT = /** @type {{Record<number, Record<string, number>>}} */ ({json.dumps(by_font, separators=(",", ":"))})\n'
-    f'export const ZHONGHUA_ZIKU = /** @type {{[number, number][]}} */ ({pairs(zhzk)})\n'
-    f'export const CCAMC = /** @type {{[number, number][]}} */ ({pairs(ccamc)})\n',
+    f'export const ZHONGHUA_ZIKU = /** @type {{[number, number][]}} */ ({pairs(zhzk)})\n',
     encoding='utf-8',
 )
-print(len(babelstone), len(by_font), len(zhzk), len(ccamc))
+print(len(babelstone), len(by_font), len(zhzk))

@@ -3,8 +3,8 @@ import { baseOf, variantOf, isRadical } from './script.js'
 import { foldReading } from './reading.js'
 
 /** @typedef {{ char: string, radical: number, strokes: number, source: string, reading: string, numeric: number | null }} Entry */
-/** References from before Unicode 18, each list space-separated. @typedef {{ jin1984: string[], xrefs: string[], babelstone: string[], zhzk: string[], ccamc: string[], draft: string[] }} Encodings */
-/** @typedef {{ unicode: string, table: { name: string, version: string, sha256: string }, rows: [string, number, number, string, string | null, number | null][], radicals: string[], codes: [string, string][], origins: [string, string, string, string][], encodings: [string, string, string, string, string, string, string][] }} Records */
+/** References from before Unicode 18, each list space-separated. @typedef {{ jin1984: string[], xrefs: string[], babelstone: string[], zhzk: string[], draft: string[] }} Encodings */
+/** @typedef {{ unicode: string, table: { name: string, version: string, sha256: string }, rows: [string, number, number, string, string | null, number | null][], radicals: string[], codes: [string, string][], origins: [string, string, string, string][], encodings: [string, string, string, string, string, string][] }} Records */
 /** What a source says about where a character comes from. @typedef {{ relation: string, source: string, work: string }} Origin */
 
 export const ix = {
@@ -51,11 +51,11 @@ export function fill(records) {
   ix.encodings = new Map()
   ix.references = new Map()
   const list = (/** @type {string} */ text) => (text ? text.split(' ') : [])
-  for (const [char, jin1984, xrefs, babelstone, zhzk, ccamc, draft] of records.encodings) {
-    const encodings = { jin1984: list(jin1984), xrefs: list(xrefs), babelstone: list(babelstone), zhzk: list(zhzk), ccamc: list(ccamc), draft: list(draft) }
+  for (const [char, jin1984, xrefs, babelstone, zhzk, draft] of records.encodings) {
+    const encodings = { jin1984: list(jin1984), xrefs: list(xrefs), babelstone: list(babelstone), zhzk: list(zhzk), draft: list(draft) }
     ix.encodings.set(char, encodings)
     // A draft code point is not indexed: it falls in the same block as the final ones.
-    for (const reference of [...encodings.jin1984, ...encodings.xrefs, ...encodings.babelstone, ...encodings.zhzk, ...encodings.ccamc]) {
+    for (const reference of [...encodings.jin1984, ...encodings.xrefs, ...encodings.babelstone, ...encodings.zhzk]) {
       const key = reference.replace(/\(.*\)$/, '')
       ix.references.set(key, [...(ix.references.get(key) ?? []), char])
     }
