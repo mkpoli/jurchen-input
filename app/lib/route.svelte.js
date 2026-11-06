@@ -19,6 +19,7 @@ export const GROUPS = /** @type {const} */ ([
     label: 'nav.group.sound',
     pages: [
       { path: 'reading', label: 'nav.reading', hint: 'nav.reading.hint' },
+      { path: 'syllables', label: 'nav.syllables', hint: 'nav.syllables.hint' },
       { path: 'transcribe', label: 'nav.transcribe', hint: 'nav.transcribe.hint' },
     ],
   },

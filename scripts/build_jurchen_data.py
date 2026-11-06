@@ -5,8 +5,8 @@
 
 Radical, strokes, source, reading and numeric value come from Unicode's JurchenSources.txt; stroke
 codes, with the variant sequences they name, come from Alari's Rime table; references to the older
-encodings come from data/encodings/characters.tsv. A sequence the table
-lists and the font does not draw stops the build.
+encodings come from data/encodings/characters.tsv; character origins come from
+data/etymology/origins.tsv. A sequence the table lists and the font does not draw stops the build.
 """
 import csv
 import gzip
@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 UCD = ROOT / 'data/unicode/JurchenSources-18.0.0.txt'
 TABLE = ROOT / 'data/alari/Alari_jurc.dict.yaml'
 ENCODINGS = ROOT / 'data/encodings/characters.tsv'
+ORIGINS = ROOT / 'data/etymology/origins.tsv'
 OUT = ROOT / 'app/data/jurchen.json.gz'
 CHARS = range(0x18E00, 0x19192)
 RADICALS = range(0x191A0, 0x191D3)
@@ -72,6 +73,10 @@ def main():
         encodings = [[chr(int(row['unicode'], 16)), row['jin1984'], row['xrefs'], row['babelstone'], row['zhzk'], row['n5207_draft']]
                      for row in csv.DictReader(source_file, delimiter='\t')]
     assert len(encodings) == 914
+    with ORIGINS.open(encoding='utf-8', newline='') as source_file:
+        origins = [[chr(int(row['unicode'], 16)), row['relation'], row['source_char'], row['work']]
+                   for row in csv.DictReader(source_file, delimiter='\t')]
+    assert all(0x18E00 <= ord(char) <= 0x19191 for char, *_ in origins)
     document = {
         'unicode': '18.0.0',
         'table': {'name': 'Alari_jurc', 'version': '2026.05.29', 'sha256': hashlib.sha256(TABLE.read_bytes()).hexdigest()},
@@ -79,6 +84,7 @@ def main():
         'radicals': [chr(point) for point in RADICALS],
         'codes': codes,
         'encodings': encodings,
+        'origins': origins,
     }
     raw = json.dumps(document, ensure_ascii=False, separators=(',', ':')).encode()
     OUT.parent.mkdir(parents=True, exist_ok=True)

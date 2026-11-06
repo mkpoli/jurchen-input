@@ -26,6 +26,10 @@ export const PAGE_SEO = {
     title: 'Reading — Jurchen Input',
     description: 'Type a reading from Jin Qizong’s Jurchen dictionary, with or without phonetic letters, and see the characters read so.',
   },
+  syllables: {
+    title: 'Syllables — Jurchen Input',
+    description: 'The Jurchen characters with one-syllable readings, laid out like a kana chart by initial and rime.',
+  },
   transcribe: {
     title: 'Transcribe — Jurchen Input',
     description: 'Read a piece of Jurchen text character by character, with the reading of each one under it.',

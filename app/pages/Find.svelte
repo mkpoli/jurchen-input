@@ -69,6 +69,7 @@
     { page: 'draw', title: 'nav.draw', body: 'find.door.draw', glyph: '\u{18E36}' },
     { page: 'radicals', title: 'nav.radicals', body: 'find.door.radicals', glyph: '\u{191BF}' },
     { page: 'reading', title: 'nav.reading', body: 'find.door.reading', glyph: '\u{19129}' },
+    { page: 'syllables', title: 'nav.syllables', body: 'find.door.syllables', glyph: '\u{18F7A}' },
     { page: 'transcribe', title: 'nav.transcribe', body: 'find.door.transcribe', glyph: MARK },
     { page: 'convert', title: 'nav.convert', body: 'find.door.convert', glyph: '\u{19049}' },
   ])

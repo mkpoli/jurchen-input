@@ -25,6 +25,8 @@
       <dd>{@html t('about.encodings')}</dd>
       <dt>{t('about.convertTitle')}</dt>
       <dd>{@html t('about.convert')}</dd>
+      <dt>{t('about.originTitle')}</dt>
+      <dd>{t('about.origin')}</dd>
       <dt>{t('about.missingTitle')}</dt>
       <dd>{t('about.missing')}</dd>
     </dl>

@@ -41,7 +41,7 @@ async function step(name, check) {
   }
 }
 
-const PAGES = ['', 'strokes', 'draw', 'radicals?q=31', 'reading?q=tumen', 'transcribe', `convert?q=${encodeURIComponent('\uE3C7\uE004\u{F1C72}\uE6F4\uE0DC')}`, 'about']
+const PAGES = ['', 'strokes', 'draw', 'radicals?q=31', 'reading?q=tumen', 'syllables', 'syllables?q=all', 'transcribe', `convert?q=${encodeURIComponent('\uE3C7\uE004\u{F1C72}\uE6F4\uE0DC')}`, 'about']
 const VIEWS = [
   { name: 'desktop', width: 1440, height: 900 },
   { name: 'phone', width: 390, height: 844 },
@@ -63,7 +63,7 @@ for (const view of VIEWS) for (const scheme of /** @type {const} */ (['light', '
       await page.evaluate(() => document.fonts.ready)
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)
       assert.ok(overflow <= 0, `the page is ${overflow}px wider than the screen`)
-      await page.screenshot({ path: join(SHOTS, `${view.name}-${scheme}-${(path.split('?')[0] || 'find')}.png`) })
+      await page.screenshot({ path: join(SHOTS, `${view.name}-${scheme}-${(path.replace(/\?q=.*/, m => (m === '?q=all' ? '-all' : '')) || 'find')}.png`) })
     })
   }
   assert.deepEqual(errors, [], errors.join('\n'))
@@ -175,6 +175,33 @@ await step('convert: older codes become Unicode, and what cannot be read is list
   await box.fill('\uE282')
   assert.equal(await page.locator('output').textContent(), '\u{18F95}')
   assert.match(await page.locator('.codes').innerText(), /U\+18F95/)
+})
+
+await step('syllables: a reading stands at its initial and rime', async () => {
+  await page.goto(`${SITE}/syllables`, { waitUntil: 'networkidle' })
+  const heads = await page.locator('thead th').allInnerTexts()
+  assert.deepEqual(heads.slice(0, 3), ['-a', '-ə', '-e'])
+  const glyph = page.getByTitle(/^nie /)
+  assert.equal(await glyph.count(), 0, 'nie is a diphthong, away from the open syllables')
+  await page.getByRole('button', { name: 'Glides' }).click()
+  assert.match(page.url(), /q=glide/)
+  await page.getByTitle(/^nie · U\+18E00/).click()
+  assert.match(page.url(), /c=18E00/)
+  await page.getByRole('button', { name: 'All', exact: true }).click()
+  assert.ok(await page.locator('thead th').count() > 30)
+  assert.equal(await page.getByTitle(/^tumən /).count(), 0, 'a word of two syllables stays out')
+})
+
+await step('card: an origin is cited, and a character with none says so', async () => {
+  await page.goto(`${SITE}/?c=18F7A`, { waitUntil: 'networkidle' })
+  const card = page.locator('aside.card')
+  assert.match(await card.innerText(), /Written as Chinese 日 in Jin inscriptions/)
+  assert.match(await card.innerText(), /Altered from Chinese 日, keeping its meaning/)
+  assert.ok(await card.locator('a[href*="chikyukotobamura"]').count() >= 2)
+  await page.goto(`${SITE}/?c=18E00`, { waitUntil: 'networkidle' })
+  assert.match(await page.locator('aside.card').innerText(), /No source open to this site/)
+  await page.goto(`${SITE}/?c=18E01`, { waitUntil: 'networkidle' })
+  assert.match(await page.locator('aside.card').innerText(), /all Jurchen numerals/)
 })
 
 await step('radicals: choosing one lists its characters', async () => {
@@ -293,6 +320,65 @@ await step('settings: the language switch reads the catalogue', async () => {
     assert.equal(await page.evaluate(() => document.documentElement.lang), lang, name)
     await page.screenshot({ path: join(SHOTS, `lang-${lang}-strokes.png`) })
   }
+})
+
+await step('the sponsor dialog offers both tips, OFUSE first in Japanese, and Escape closes it', async () => {
+  const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, locale: 'en-US' })
+  const sponsor = await context.newPage()
+  for (const [lang, order] of [['en', ['Ko-fi', 'OFUSE']], ['ja', ['OFUSE', 'Ko-fi']]]) {
+    await sponsor.goto(`${SITE}/?lang=${lang}`, { waitUntil: 'load' })
+    assert.equal(await sponsor.evaluate(() => performance.getEntriesByType('resource').some(entry => entry.name.includes('supporters.mkpo.li'))), false, 'a page view does not reach the supporters service')
+    const trigger = sponsor.locator('button.sponsor')
+    await trigger.click()
+    const dialog = sponsor.locator('dialog.sponsor-dialog')
+    await dialog.locator('.tip').first().waitFor()
+    assert.deepEqual(await dialog.locator('.tip strong').allTextContents(), order)
+    assert.equal(await dialog.locator('supporters-roll').count(), 1, 'the supporters roll is in the dialog')
+    const isOpen = () => dialog.evaluate(element => /** @type {HTMLDialogElement} */ (element).open)
+    const lead = /** @type {{ x: number, y: number }} */ (await dialog.locator('.lead').boundingBox())
+    await sponsor.mouse.move(lead.x + 20, lead.y + 8)
+    await sponsor.mouse.down()
+    await sponsor.mouse.move(20, 500)
+    await sponsor.mouse.up()
+    assert.equal(await isOpen(), true, 'a selection dragged out of the box leaves it open')
+    await sponsor.mouse.click(20, 500)
+    assert.equal(await isOpen(), false, 'a click on the backdrop closes it')
+    await trigger.click()
+    await sponsor.keyboard.press('Escape')
+    assert.equal(await isOpen(), false, 'Escape closes it')
+    assert.equal(await trigger.evaluate(element => element === document.activeElement), true, 'focus returns to the button')
+  }
+  await context.close()
+})
+
+await step('an open sponsor dialog leaves the drawing behind it alone', async () => {
+  const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, locale: 'en-US' })
+  const draw = await context.newPage()
+  await draw.goto(`${SITE}/draw`, { waitUntil: 'load' })
+  const canvas = draw.locator('canvas').first()
+  await canvas.waitFor()
+  const box = /** @type {{ x: number, y: number, width: number, height: number }} */ (await canvas.boundingBox())
+  await draw.mouse.move(box.x + box.width * .2, box.y + box.height * .4)
+  await draw.mouse.down()
+  await draw.mouse.move(box.x + box.width * .8, box.y + box.height * .6, { steps: 8 })
+  await draw.mouse.up()
+  const ink = () => canvas.evaluate(element => {
+    const pad = /** @type {HTMLCanvasElement} */ (element)
+    const data = /** @type {CanvasRenderingContext2D} */ (pad.getContext('2d')).getImageData(0, 0, pad.width, pad.height).data
+    let painted = 0
+    for (let at = 3; at < data.length; at += 4) if (data[at]) painted++
+    return painted
+  })
+  const before = await ink()
+  assert.ok(before > 0, 'the stroke is on the pad')
+  await draw.locator('button.sponsor').click()
+  await draw.locator('dialog.sponsor-dialog .tip').first().waitFor()
+  await draw.keyboard.press('Control+z')
+  assert.equal(await ink(), before, 'Ctrl+Z leaves the stroke')
+  await draw.keyboard.press('Escape')
+  assert.equal(await draw.locator('dialog.sponsor-dialog').evaluate(element => /** @type {HTMLDialogElement} */ (element).open), false, 'Escape closes the dialog')
+  assert.equal(await ink(), before, 'Escape leaves the stroke')
+  await context.close()
 })
 
 await browser.close()
