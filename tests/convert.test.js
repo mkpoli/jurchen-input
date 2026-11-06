@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
-import { analyze, fromBabelStone, fromZhonghuaZiku, stripVariants, toBabelStone, toUnicode, toZhonghuaZiku } from '../src/index.js'
+import { analyze, fromBabelStone, fromCcamc, fromZhonghuaZiku, stripVariants, toBabelStone, toCcamc, toUnicode, toZhonghuaZiku } from '../src/index.js'
 
 const rows = readFileSync('data/encodings/legacy-map.tsv', 'utf8').trim().split('\n').slice(1).map(line => line.split('\t'))
 const ch = (/** @type {string} */ hex) => String.fromCodePoint(parseInt(hex, 16))
@@ -9,7 +9,7 @@ describe('reading older encodings', () => {
   test('every mapped row of the table converts', () => {
     for (const [encoding, legacy, unicode] of rows) {
       if (!unicode) continue
-      const read = encoding === 'babelstone' ? fromBabelStone : fromZhonghuaZiku
+      const read = { babelstone: fromBabelStone, zhzk: fromZhonghuaZiku, ccamc: fromCcamc }[encoding]
       expect(read(ch(legacy))).toBe(ch(unicode))
     }
   })
@@ -33,6 +33,35 @@ describe('reading older encodings', () => {
   })
 })
 
+describe('CCAMC', () => {
+  test('codes run with N3788 numbers, as CCAMC states', () => {
+    expect(fromCcamc('\uEC9A')).toBe('\u{19049}') // N3788 no. 1, əmu
+    expect(fromCcamc('\uEC9E')).toBe('\u{18E01}') // no. 5, tumən
+    expect(toCcamc('\u{18E01}')).toBe('\uEC9E')
+  })
+  test('radicals follow Unicode, whose 23 is split in two', () => {
+    expect(fromCcamc('\uF1FA')).toBe('\u{191A0}')
+    expect(fromCcamc('\uF210')).toBe('\u{191B6}')
+    expect(fromCcamc('\uF211')).toBe('\u{191B8}')
+    expect(fromCcamc('\uF22A')).toBe('\u{191D2}')
+    expect(fromCcamc('\uF22B')).toBe('\u{191BE}')
+    expect(fromCcamc('\uF27C')).toBe('\uF27C')
+  })
+  test('analyze counts a radical as Jurchen', () => {
+    expect(analyze(fromCcamc('\uF1FA')).unicode).toBe(1)
+  })
+  test('toUnicode reads it only when asked', () => {
+    expect(toUnicode('\uEC9E')).toBe('\uEC9E')
+    expect(toUnicode('\uEC9E', { ccamc: true })).toBe('\u{18E01}')
+  })
+  test('its range and BabelStone\'s stay apart', () => {
+    for (const [encoding, legacy] of rows) {
+      if (encoding === 'ccamc') expect(parseInt(legacy, 16)).toBeGreaterThanOrEqual(0xEC9A)
+      if (encoding === 'babelstone') expect(parseInt(legacy, 16)).toBeLessThan(0xEC9A)
+    }
+  })
+})
+
 describe('writing older encodings', () => {
   test('a character with several codes writes the first and reads back', () => {
     expect(toZhonghuaZiku('\u{18E01}')).toBe('\u{F1C72}')
@@ -53,6 +82,6 @@ describe('writing older encodings', () => {
 
 describe('analyze', () => {
   test('counts what the text is written with', () => {
-    expect(analyze('\u{18E01}︀\u{F1C72}a')).toEqual({ unicode: 1, variants: 1, babelstone: 2, zhzk: 1, unknown: [''], fontSpecific: [''] })
+    expect(analyze('\u{18E01}︀\u{F1C72}a')).toEqual({ unicode: 1, variants: 1, babelstone: 2, zhzk: 1, ccamc: 0, unknown: [''], fontSpecific: [''] })
   })
 })

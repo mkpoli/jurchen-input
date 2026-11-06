@@ -28,6 +28,7 @@
     { label: t('card.enc.xrefs'), items: encodings.xrefs },
     { label: t('card.enc.babelstone'), items: encodings.babelstone.map(code => `U+${code}`) },
     { label: t('card.enc.zhzk'), items: encodings.zhzk.map(code => `U+${code}`) },
+    { label: t('card.enc.ccamc'), items: encodings.ccamc.map(code => `U+${code}`) },
     { label: t('card.enc.draft'), items: encodings.draft },
   ].filter(row => row.items.length) : [])
   const origins = $derived(ready && base ? ix.origins.get(base) ?? [] : [])

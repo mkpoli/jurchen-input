@@ -1,1 +1,1 @@
-export { analyze, fromBabelStone, fromZhonghuaZiku, stripVariants, toBabelStone, toUnicode, toZhonghuaZiku } from './convert.js'
+export { analyze, fromBabelStone, fromCcamc, fromZhonghuaZiku, stripVariants, toBabelStone, toCcamc, toUnicode, toZhonghuaZiku } from './convert.js'
