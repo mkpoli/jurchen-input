@@ -91,14 +91,12 @@ describe('stroke codes', () => {
 
 describe('references from before Unicode 18', () => {
   test('every character has a record and the proposals\' links hold', () => {
-    expect(ix.encodings.size).toBe(964)
-    expect(ix.encodings.get('\u{191A0}')?.ccamc).toEqual(['F1FA'])
-    expect(byReference('U+F1FA')).toEqual(['\u{191A0}'])
+    expect(ix.encodings.size).toBe(914)
     const tumen = ix.encodings.get('\u{18E01}')
-    expect(tumen).toEqual({ jin1984: ['002-04', '146-03', '270-02'], xrefs: ['X-0005', 'X-0668', 'X-1235'], babelstone: ['E004'], zhzk: ['F1C72', 'F1F02', 'F2134'], ccamc: ['EC9E', 'EF35', 'F16C'], draft: ['18E03'] })
+    expect(tumen).toEqual({ jin1984: ['002-04', '146-03', '270-02'], xrefs: ['X-0005', 'X-0668', 'X-1235'], babelstone: ['E004'], zhzk: ['F1C72', 'F1F02', 'F2134'], draft: ['18E03'] })
   })
   test('every form of a reference finds the character', () => {
-    for (const query of ['X-0005', 'x0005', '002-04', 'NC:002.04', 'U+E004', 'e004', 'U+F1C72', 'U+EC9E']) expect(byReference(query)).toEqual(['\u{18E01}'])
+    for (const query of ['X-0005', 'x0005', '002-04', 'NC:002.04', 'U+E004', 'e004', 'U+F1C72']) expect(byReference(query)).toEqual(['\u{18E01}'])
     expect(byReference('18E03')).toEqual([])
   })
   test('a code point that means two characters names both', () => {

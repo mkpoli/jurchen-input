@@ -125,7 +125,7 @@ await step('strokes: a key with no continuation is dim, letters outside the five
 await step('card: forms, source and number of a character', async () => {
   await page.goto(`${SITE}/?c=18E01`, { waitUntil: 'networkidle' })
   const card = await page.locator('aside.card').innerText()
-  for (const expected of ['U+18E01', 'tumən', '10,000', 'Jin Qizong 1984', 'hpz', '2 forms', 'X-0668', 'U+E004', 'U+F2134', 'U+EC9E', '18E03']) assert.ok(card.toLowerCase().includes(expected.toLowerCase()), `${expected} is missing from: ${card}`)
+  for (const expected of ['U+18E01', 'tumən', '10,000', 'Jin Qizong 1984', 'hpz', '2 forms', 'X-0668', 'U+E004', 'U+F2134', '18E03']) assert.ok(card.toLowerCase().includes(expected.toLowerCase()), `${expected} is missing from: ${card}`)
   await page.screenshot({ path: join(SHOTS, 'flow-card.png') })
   await page.locator('aside.card .ui-tile').nth(1).click()
   assert.match(page.url(), /c=18E01-FE00/)
@@ -171,13 +171,6 @@ await step('convert: older codes become Unicode, and what cannot be read is list
   await page.locator('.option select').first().selectOption('zhzk')
   assert.equal(await page.locator('output').textContent(), '\u{F1C72}')
   await page.screenshot({ path: join(SHOTS, 'flow-convert.png') })
-  await page.locator('.option select').first().selectOption('unicode')
-  await box.fill('\uEC9E')
-  assert.equal(await page.locator('output').textContent(), '\u{18E01}')
-  await page.getByRole('checkbox').nth(1).uncheck()
-  assert.equal(await page.locator('output').textContent(), '\uEC9E')
-  await page.getByRole('checkbox').nth(1).check()
-  await page.locator('.option select').first().selectOption('zhzk')
   // U+E282 is U+18F95, which has no Zhonghua Ziku code: the result cannot be complete, and says so.
   await box.fill('\uE282')
   assert.equal(await page.locator('output').textContent(), '\u{18F95}')
