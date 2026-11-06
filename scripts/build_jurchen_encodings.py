@@ -8,7 +8,8 @@ Two tables come out, under data/encodings/:
 
 - legacy-map.tsv, one row for each private-use code point: which character it stands for and how
   that is known.
-- characters.tsv, one row for each of the 914 characters: every reference the proposals give it.
+- characters.tsv, one row for each of the 914 characters and each radical with a code: every
+  reference the proposals give it.
 
 The links, all from the two proposals:
 
@@ -386,6 +387,8 @@ def main():
         drafts = sorted({x_table[x]['draft'] for x in row['xrefs'] if x in x_table and x_table[x]['draft']})
         rows.append((code, ' '.join(e.rstrip('*') for e in row['entries']), ' '.join(row['xrefs']),
                      ' '.join(babelstone.get(code, [])), ' '.join(zhzk.get(code, [])), ' '.join(ccamc.get(code, [])), ' '.join(drafts)))
+    for code in sorted((c for c in ccamc if int(c, 16) >= 0x191A0), key=lambda c: int(c, 16)):
+        rows.append((code, '', '', '', '', ' '.join(ccamc[code]), ''))
     write(OUT / 'characters.tsv', ('unicode', 'jin1984', 'xrefs', 'babelstone', 'zhzk', 'ccamc', 'n5207_draft'), rows)
     counts = collections.Counter((row[0], row[4]) for row in legacy)
     print(sorted(counts.items()))

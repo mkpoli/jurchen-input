@@ -72,7 +72,7 @@ def main():
     with ENCODINGS.open(encoding='utf-8', newline='') as source_file:
         encodings = [[chr(int(row['unicode'], 16)), row['jin1984'], row['xrefs'], row['babelstone'], row['zhzk'], row['ccamc'], row['n5207_draft']]
                      for row in csv.DictReader(source_file, delimiter='\t')]
-    assert len(encodings) == 914
+    assert len(encodings) >= 914
     with ORIGINS.open(encoding='utf-8', newline='') as source_file:
         origins = [[chr(int(row['unicode'], 16)), row['relation'], row['source_char'], row['work']]
                    for row in csv.DictReader(source_file, delimiter='\t')]

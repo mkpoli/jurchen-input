@@ -91,7 +91,9 @@ describe('stroke codes', () => {
 
 describe('references from before Unicode 18', () => {
   test('every character has a record and the proposals\' links hold', () => {
-    expect(ix.encodings.size).toBe(914)
+    expect(ix.encodings.size).toBe(964)
+    expect(ix.encodings.get('\u{191A0}')?.ccamc).toEqual(['F1FA'])
+    expect(byReference('U+F1FA')).toEqual(['\u{191A0}'])
     const tumen = ix.encodings.get('\u{18E01}')
     expect(tumen).toEqual({ jin1984: ['002-04', '146-03', '270-02'], xrefs: ['X-0005', 'X-0668', 'X-1235'], babelstone: ['E004'], zhzk: ['F1C72', 'F1F02', 'F2134'], ccamc: ['EC9E', 'EF35', 'F16C'], draft: ['18E03'] })
   })
