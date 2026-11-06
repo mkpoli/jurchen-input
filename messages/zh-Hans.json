@@ -1,6 +1,7 @@
 {
   "app.name": "女真文输入",
-  "app.home": "女真文输入首页",
+  "app.sites": "网站",
+  "app.sites.more": "更多文字项目",
   "app.failed": "字形资料加载失败，请刷新页面重试。",
   "nav.label": "查字方式",
   "nav.find": "查找",
