@@ -47,6 +47,9 @@ describe('CCAMC', () => {
     expect(fromCcamc('\uF22B')).toBe('\u{191BE}')
     expect(fromCcamc('\uF27C')).toBe('\uF27C')
   })
+  test('analyze counts a radical as Jurchen', () => {
+    expect(analyze(fromCcamc('\uF1FA')).unicode).toBe(1)
+  })
   test('toUnicode reads it only when asked', () => {
     expect(toUnicode('\uEC9E')).toBe('\uEC9E')
     expect(toUnicode('\uEC9E', { ccamc: true })).toBe('\u{18E01}')

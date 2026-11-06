@@ -30,7 +30,7 @@ const TO_CCAMC = reverse(CCAMC)
 const BMP_PUA = /[-]/g
 const SMP_PUA = /[\u{F0000}-\u{FFFFD}\u{100000}-\u{10FFFD}]/gu
 const ANY_PUA = /[-\u{F0000}-\u{FFFFD}\u{100000}-\u{10FFFD}]/gu
-const JURCHEN = /[\u{18E00}-\u{19191}]/u
+const JURCHEN = /[\u{18E00}-\u{19191}\u{191A0}-\u{191D2}]/u
 const JURCHEN_RUN = /[\u{18E00}-\u{19191}\u{191A0}-\u{191D2}][\uFE00-\uFE04]?/gu
 
 /**
