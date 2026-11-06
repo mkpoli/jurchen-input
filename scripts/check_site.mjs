@@ -171,6 +171,9 @@ await step('convert: older codes become Unicode, and what cannot be read is list
   await page.locator('.option select').first().selectOption('zhzk')
   assert.equal(await page.locator('output').textContent(), '\u{F1C72}')
   await page.screenshot({ path: join(SHOTS, 'flow-convert.png') })
+  // A radical has no older code, so it stays and is listed.
+  await box.fill('\u{191A0}')
+  assert.match(await page.locator('.codes').innerText(), /U\+191A0/)
   // U+E282 is U+18F95, which has no Zhonghua Ziku code: the result cannot be complete, and says so.
   await box.fill('\uE282')
   assert.equal(await page.locator('output').textContent(), '\u{18F95}')
