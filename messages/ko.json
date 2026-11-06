@@ -1,6 +1,7 @@
 {
   "app.name": "여진 문자 입력기",
-  "app.home": "여진 문자 입력기 홈",
+  "app.sites": "사이트",
+  "app.sites.more": "다른 문자 프로젝트",
   "app.failed": "문자 정보를 불러오지 못했습니다. 페이지를 새로고침해 다시 시도해 주세요.",
   "nav.label": "글자 찾는 방법",
   "nav.find": "찾기",

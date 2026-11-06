@@ -1,6 +1,7 @@
 {
   "app.name": "女真文輸入",
-  "app.home": "女真文輸入首頁",
+  "app.sites": "網站",
+  "app.sites.more": "更多文字專案",
   "app.failed": "無法載入字元資料，請重新載入頁面再試。",
   "nav.label": "查字方式",
   "nav.find": "查找",
