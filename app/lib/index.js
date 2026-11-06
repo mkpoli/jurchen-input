@@ -4,7 +4,8 @@ import { foldReading } from './reading.js'
 
 /** @typedef {{ char: string, radical: number, strokes: number, source: string, reading: string, numeric: number | null }} Entry */
 /** References from before Unicode 18, each list space-separated. @typedef {{ jin1984: string[], xrefs: string[], babelstone: string[], zhzk: string[], draft: string[] }} Encodings */
-/** @typedef {{ unicode: string, table: { name: string, version: string, sha256: string }, rows: [string, number, number, string, string | null, number | null][], radicals: string[], codes: [string, string][], encodings: [string, string, string, string, string, string][] }} Records */
+/** @typedef {{ unicode: string, table: { name: string, version: string, sha256: string }, rows: [string, number, number, string, string | null, number | null][], radicals: string[], codes: [string, string][], origins: [string, string, string, string][], encodings: [string, string, string, string, string, string][] }} Records */
+/** What a source says about where a character comes from. @typedef {{ relation: string, source: string, work: string }} Origin */
 
 export const ix = {
   /** @type {Map<string, Entry>} */ entries: new Map(),
@@ -18,6 +19,7 @@ export const ix = {
   /** The numerals. @type {Map<number, string>} */ numerals: new Map(),
   /** Each character's references from before Unicode 18. @type {Map<string, Encodings>} */ encodings: new Map(),
   /** The characters each of those references names. @type {Map<string, string[]>} */ references: new Map(),
+  /** What the sources say about each character's origin. @type {Map<string, Origin[]>} */ origins: new Map(),
 }
 
 const order = (/** @type {string} */ a, /** @type {string} */ b) => (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0) || variantOf(a) - variantOf(b)
@@ -36,6 +38,8 @@ export function fill(records) {
   }
   for (const list of ix.forms.values()) list.sort(order)
   ix.readings = [...ix.entries.values()].filter(entry => entry.reading).map(entry => ({ char: entry.char, raw: entry.reading, folded: foldReading(entry.reading) }))
+  ix.origins = new Map()
+  for (const [char, relation, source, work] of records.origins) ix.origins.set(char, [...(ix.origins.get(char) ?? []), { relation, source, work }])
   ix.byRadical = new Map()
   ix.numerals = new Map()
   ix.strokes = new Map()

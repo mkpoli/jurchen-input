@@ -5,6 +5,7 @@ import { fill, ix, radicalNumber } from '../app/lib/index.js'
 import { baseOf, clusters, codePoint, fromParam, lastCluster, readSource, toParam, variantOf } from '../app/lib/script.js'
 import { byCode, byCodePoint, byNumber, byReference, jurchenIn, nextLetters } from '../app/lib/search.js'
 import { foldQuery, foldReading, searchReadings } from '../app/lib/reading.js'
+import { buildChart, cellKey, rimeGroup, syllablesOf } from '../app/lib/syllables.js'
 import { indexShapes, parseShapes, rankShapes, SIZE } from '../app/lib/shape.js'
 
 const records = JSON.parse(gunzipSync(readFileSync('app/data/jurchen.json.gz')).toString())
@@ -101,6 +102,57 @@ describe('references from before Unicode 18', () => {
   test('a code point that means two characters names both', () => {
     expect(byReference('E6F4').sort()).toEqual(['\u{18F70}', '\u{1905C}'])
     expect(ix.encodings.get('\u{18F70}')?.babelstone).toContain('E6F4(tianyige)')
+  })
+})
+
+describe('syllable chart', () => {
+  test('a reading splits into initial and rime', () => {
+    expect(syllablesOf('nie')).toEqual([{ initial: 'n', rime: 'ie' }])
+    expect(syllablesOf('dʒuan')).toEqual([{ initial: 'dʒ', rime: 'uan' }])
+    expect(syllablesOf('ŋgai')).toEqual([{ initial: 'ŋg', rime: 'ai' }])
+    expect(syllablesOf('a')).toEqual([{ initial: '', rime: 'a' }])
+    expect(syllablesOf('(g)an')).toEqual([{ initial: 'g', rime: 'an' }])
+    expect(syllablesOf('ŋi, gi')).toEqual([{ initial: 'ŋ', rime: 'i' }, { initial: 'g', rime: 'i' }])
+    expect(syllablesOf('r')).toEqual([{ initial: '', rime: 'r' }])
+    expect(syllablesOf('in ku')).toEqual([{ initial: '', rime: 'in' }, { initial: 'k', rime: 'u' }])
+    expect(syllablesOf('fai muta')).toEqual([{ initial: 'f', rime: 'ai' }])
+    expect(syllablesOf('ku duman')).toEqual([{ initial: 'k', rime: 'u' }])
+    expect(syllablesOf('xodiwo o')).toEqual([{ initial: '', rime: 'o' }])
+  })
+  test('a word of two syllables or more has none', () => {
+    for (const raw of ['tumən', 'ania', 'giaxu.un', 'bandi']) expect(syllablesOf(raw)).toEqual([])
+  })
+  test('rimes fall into their groups', () => {
+    expect(['a', 'ie', 'an', 'aŋ', 'ar', 'r'].map(rimeGroup)).toEqual(['open', 'glide', 'n', 'ng', 'other', 'other'])
+  })
+  test('every reading is either charted or counted as longer', () => {
+    const chart = buildChart(ix.readings)
+    expect(chart.charted + chart.consonants + chart.longer).toBe(806)
+    expect(chart.consonants).toBe(3)
+    expect(chart.cells.get(cellKey('n', 'ie'))?.map(cell => cell.char)).toContain('\u{18E00}')
+    expect(chart.initials[0]).toBe('')
+    for (const cells of chart.cells.values()) for (const cell of cells) expect(syllablesOf(cell.raw).length).toBeGreaterThan(0)
+    expect(chart.cells.get(cellKey('f', 'ai'))?.map(cell => cell.raw)).toContain('fai muta')
+  })
+})
+
+describe('character origins', () => {
+  test('hold only cited statements about characters with these readings', () => {
+    expect(ix.origins.get('\u{19049}')).toEqual([{ relation: 'jin-identical', source: '一', work: 'n5261r' }, { relation: 'chinese-meaning', source: '一', work: 'jinjin1980' }])
+    expect(ix.origins.get('\u{18F7A}')?.map(origin => origin.work)).toEqual(['n5261r', 'kiyose', 'kiyose', 'jinjin1980'])
+    expect(ix.origins.get('\u{190BD}')).toEqual([{ relation: 'chinese-sound', source: '舍', work: 'jinjin1980' }])
+    const readings = { '18F7A': 'inəŋgi', '190FA': 'bia', 19049: 'əmu', '1904A': 'dʒo', '18E16': 'abxa', 19012: 'ania', 19171: 'tasxa', '18EDB': 'bəje', '18F65': 'mudu', '1906F': 'nialma', '1907C': 'dondi', '190FB': 'duli', 19182: 'xutu' }
+    expect(ix.origins.size).toBe(37)
+    // The book's numerals agree with Unicode's numeric values.
+    for (const [source, value] of [['三', 3], ['六', 6], ['九', 9], ['十', 10], ['百', 100], ['萬', 10000]]) {
+      const char = ix.numerals.get(value)
+      expect(ix.origins.get(char ?? '')?.map(origin => origin.source)).toContain(source)
+    }
+    for (const [code, reading] of Object.entries(readings)) {
+      const char = String.fromCodePoint(parseInt(code, 16))
+      expect(ix.entries.get(char)?.reading).toBe(reading)
+      expect(ix.origins.has(char)).toBe(true)
+    }
   })
 })
 

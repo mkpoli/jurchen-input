@@ -15,6 +15,7 @@ check its record, and put it into your text.
   says so.
 - **Radicals**: Unicode's 51 radicals, each with its characters by stroke count.
 - **Reading**: the readings of Jin Qizong's dictionary, with phonetic letters or plain ones.
+- **Syllables**: the one-syllable readings laid out like a kana chart, by initial and rime.
 - **Transcribe**: the text with the reading of each character under it.
 
 The card of a character shows its code points, stroke code, variant forms, reading, numeric value
@@ -45,4 +46,12 @@ bunx vite preview app --port 5198 &
 SITE_URL=http://localhost:5198 bun run check:site   # every page and flow in Chromium, shots in shots/
 ```
 
+A push to `main` runs the tests, type check and build, then deploys to <https://jurchen.mkpo.li/>. It needs the repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`.
+
 The added code is MIT; see `LICENSE`. The design system is in `design/`.
+
+## Sponsor
+
+I build jurchen-input on my own, with no funding behind it, and it's free for everyone. If it's useful to you, a tip on [Ko-fi](https://ko-fi.com/mkpoli) or [OFUSE](https://ofuse.me/mkpoli) gives me time to keep improving it. Companies interested in sponsoring can write to mkpoli@mkpo.li.
+
+[![Support me on Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/mkpoli)
