@@ -22,6 +22,14 @@
   const radicalChar = $derived(entry ? ix.radicals[entry.radical - 1] : '')
   const under = $derived(ready && number ? ix.byRadical.get(number) ?? [] : [])
   const sameReading = $derived(entry?.reading ? ix.readings.filter(other => other.raw === entry?.reading && other.char !== base).map(other => other.char) : [])
+  const encodings = $derived(ready && base ? ix.encodings.get(base) : undefined)
+  const encodingRows = $derived(encodings ? [
+    { label: t('card.enc.jin1984'), items: encodings.jin1984 },
+    { label: t('card.enc.xrefs'), items: encodings.xrefs },
+    { label: t('card.enc.babelstone'), items: encodings.babelstone.map(code => `U+${code}`) },
+    { label: t('card.enc.zhzk'), items: encodings.zhzk.map(code => `U+${code}`) },
+    { label: t('card.enc.draft'), items: encodings.draft },
+  ].filter(row => row.items.length) : [])
   const origins = $derived(ready && base ? ix.origins.get(base) ?? [] : [])
   /** The works an origin is cited to. */
   const WORKS = /** @type {Record<string, { label: string, url: string }>} */ ({
@@ -128,6 +136,20 @@
       </section>
     {/if}
 
+    {#if encodingRows.length}
+      <section>
+        <h3 class="ui-label">{t('card.encodings')}</h3>
+        <table class="readings encodings">
+          <tbody>
+            {#each encodingRows as row (row.label)}
+              <tr><th scope="row">{row.label}</th><td class="ui-mono refs">{#each row.items as item (item)}<button class="ref" type="button" title={t('card.copyReference')} onclick={() => copy(item)}>{item}</button>{/each}</td></tr>
+            {/each}
+          </tbody>
+        </table>
+        <p class="ui-hint">{t('card.encodingsNote')}</p>
+      </section>
+    {/if}
+
     {#if under.length}
       <section>
         <h3 class="ui-label">{t('card.under', { count: under.length })}</h3>
@@ -188,6 +210,10 @@
   .readings td{padding:var(--ui-space-2xs) 0;font-family:var(--ui-font-serif);font-size:var(--ui-text-md)}
   .readings td.cjk{font-family:var(--ui-font-sans);font-size:var(--ui-text-sm)}
   .readings tr + tr{border-top:1px solid var(--ui-color-border)}
+  .refs{display:flex;flex-wrap:wrap;gap:2px var(--ui-space-2xs)}
+  .readings td.refs{font-family:var(--ui-font-mono);font-size:var(--ui-text-xs)}
+  .ref{padding:1px 4px;border:0;border-radius:var(--ui-radius-xs);background:none;color:inherit;font:inherit}
+  .ref:hover{background:var(--ui-color-surface-hover)}
   .origins{display:grid;gap:var(--ui-space-xs);margin:0;padding-inline-start:1.1em;font-size:var(--ui-text-sm);line-height:var(--ui-leading-normal)}
   .rel{gap:3px}
   .rel .ui-tile[data-open]{background:var(--ui-color-accent-soft)}

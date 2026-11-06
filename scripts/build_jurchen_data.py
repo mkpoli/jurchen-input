@@ -4,9 +4,9 @@
 """Build app/data/jurchen.json.gz from the pinned sources under data/.
 
 Radical, strokes, source, reading and numeric value come from Unicode's JurchenSources.txt; stroke
-codes, with the variant sequences they name, come from Alari's Rime table; character origins come
-from data/etymology/origins.tsv. A sequence the table
-lists and the font does not draw stops the build.
+codes, with the variant sequences they name, come from Alari's Rime table; references to the older
+encodings come from data/encodings/characters.tsv; character origins come from
+data/etymology/origins.tsv. A sequence the table lists and the font does not draw stops the build.
 """
 import csv
 import gzip
@@ -18,6 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 UCD = ROOT / 'data/unicode/JurchenSources-18.0.0.txt'
 TABLE = ROOT / 'data/alari/Alari_jurc.dict.yaml'
+ENCODINGS = ROOT / 'data/encodings/characters.tsv'
 ORIGINS = ROOT / 'data/etymology/origins.tsv'
 OUT = ROOT / 'app/data/jurchen.json.gz'
 CHARS = range(0x18E00, 0x19192)
@@ -68,6 +69,10 @@ def main():
     codes = table()
     assert len(codes) == 1502 and len({text for text, _ in codes}) == 1502
     assert {ord(text[0]) for text, _ in codes} == set(CHARS) | set(RADICALS)
+    with ENCODINGS.open(encoding='utf-8', newline='') as source_file:
+        encodings = [[chr(int(row['unicode'], 16)), row['jin1984'], row['xrefs'], row['babelstone'], row['zhzk'], row['n5207_draft']]
+                     for row in csv.DictReader(source_file, delimiter='\t')]
+    assert len(encodings) == 914
     with ORIGINS.open(encoding='utf-8', newline='') as source_file:
         origins = [[chr(int(row['unicode'], 16)), row['relation'], row['source_char'], row['work']]
                    for row in csv.DictReader(source_file, delimiter='\t')]
@@ -78,6 +83,7 @@ def main():
         'rows': rows,
         'radicals': [chr(point) for point in RADICALS],
         'codes': codes,
+        'encodings': encodings,
         'origins': origins,
     }
     raw = json.dumps(document, ensure_ascii=False, separators=(',', ':')).encode()

@@ -125,7 +125,7 @@ await step('strokes: a key with no continuation is dim, letters outside the five
 await step('card: forms, source and number of a character', async () => {
   await page.goto(`${SITE}/?c=18E01`, { waitUntil: 'networkidle' })
   const card = await page.locator('aside.card').innerText()
-  for (const expected of ['U+18E01', 'tumən', '10,000', 'Jin Qizong 1984', 'hpz', '2 forms']) assert.ok(card.toLowerCase().includes(expected.toLowerCase()), `${expected} is missing from: ${card}`)
+  for (const expected of ['U+18E01', 'tumən', '10,000', 'Jin Qizong 1984', 'hpz', '2 forms', 'X-0668', 'U+E004', 'U+F2134', '18E03']) assert.ok(card.toLowerCase().includes(expected.toLowerCase()), `${expected} is missing from: ${card}`)
   await page.screenshot({ path: join(SHOTS, 'flow-card.png') })
   await page.locator('aside.card .ui-tile').nth(1).click()
   assert.match(page.url(), /c=18E01-FE00/)
@@ -145,6 +145,13 @@ await step('find: a number, a code point and pasted text', async () => {
   await page.goto(`${SITE}/?q=${encodeURIComponent('\u{19049}\u{1904A}')}`, { waitUntil: 'networkidle' })
   assert.equal(await page.locator('.ui-row').count(), 2)
   assert.match(await page.locator('.ui-row').first().innerText(), /əmu/)
+})
+
+await step('find: a reference from before Unicode 18', async () => {
+  for (const query of ['X-0005', 'U+E004', 'U+F1C72', '002-04']) {
+    await page.goto(`${SITE}/?q=${encodeURIComponent(query)}`, { waitUntil: 'networkidle' })
+    assert.equal(await page.locator('.ui-tile .ui-script').first().textContent(), '\u{18E01}', query)
+  }
 })
 
 await step('syllables: a reading stands at its initial and rime', async () => {
