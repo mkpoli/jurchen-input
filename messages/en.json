@@ -143,7 +143,7 @@
   "strokes.key.z": "every other turning stroke, with vertical-rise and curved-rise (折、竖提、弯提)",
   "strokes.key.b": "typed after a radical's strokes, so a radical stands apart from the character it resembles (部)",
   "strokes.note": "Jurchen has no agreed stroke order. The table's authors say its codes may not match how you would write a character, so try another order when one fails.",
-  "reading.intro": "The readings of Jin Qizong's <i>Nüzhenwen Cidian</i> (1984), recorded by Unicode for 806 characters. Type phonetic letters or plain ones: <i>e</i> for ə, <i>s</i> or <i>sh</i> for ʃ, <i>j</i> or <i>zh</i> for dʒ, <i>c</i> or <i>ch</i> for tʃ, <i>h</i> for x and ç.",
+  "reading.intro": "The readings of Jin Qizong's <i>Nüzhenwen Cidian</i> (1984), recorded by Unicode for 806 characters. Type phonetic letters or plain ones: <i>e</i> for ə, <i>s</i> or <i>sh</i> for ʃ, <i>j</i> or <i>zh</i> for dʒ, <i>c</i> or <i>ch</i> for tʃ, <i>h</i> for x and ç. The ǰ, š and č spellings in <a href=\"https://kodaimoji.chowder.jp/pdf/pdf18/taidan243.pdf\">Yoshiike and Nakamura 2023</a> also work.",
   "reading.label": "Reading",
   "reading.placeholder": "tumen, dʒo, ilan…",
   "reading.none": "No reading matches “{query}”.",

@@ -143,7 +143,7 @@
   "strokes.key.z": "其餘折筆，以及豎提、彎提",
   "strokes.key.b": "在部首的筆畫碼後加上此鍵，以區分部首與形似的字（部）",
   "strokes.note": "女真文尚無公認的筆順。碼表作者提醒，編碼採用的筆順可能與使用者的寫法不同；查不到時，可換個筆順試試。",
-  "reading.intro": "讀音取自金啓孮<i>《女真文辭典》</i>（1984），Unicode共記錄了其中806個字的讀音。可輸入音標或一般拉丁字母：<i>e</i>代替ə，<i>s</i>或<i>sh</i>代替ʃ，<i>j</i>或<i>zh</i>代替dʒ，<i>c</i>或<i>ch</i>代替tʃ，<i>h</i>代替x和 ç。",
+  "reading.intro": "讀音取自金啓孮<i>《女真文辭典》</i>（1984），Unicode共記錄了其中806個字的讀音。可輸入音標或一般拉丁字母：<i>e</i>代替ə，<i>s</i>或<i>sh</i>代替ʃ，<i>j</i>或<i>zh</i>代替dʒ，<i>c</i>或<i>ch</i>代替tʃ，<i>h</i>代替x和ç。<a href=\"https://kodaimoji.chowder.jp/pdf/pdf18/taidan243.pdf\">吉池孝一、中村雅之2023</a>所用的ǰ、š、č也可直接輸入。",
   "reading.label": "讀音",
   "reading.placeholder": "tumen, dʒo, ilan…",
   "reading.none": "找不到符合「{query}」的讀音。",
