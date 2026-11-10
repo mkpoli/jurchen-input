@@ -169,6 +169,9 @@ describe('readings', () => {
     expect(foldReading('tʃo')).toBe(foldQuery('čo'))
     expect(searchReadings(ix.readings, 'šan').map(hit => hit.raw)).toContain('ʃan')
     expect(searchReadings(ix.readings, 'čo').map(hit => hit.raw)).toContain('tʃo')
+    const hits = searchReadings(ix.readings, 'ǰa').map(hit => hit.raw)
+    expect(hits).toContain('dʒa')
+    expect(hits).not.toContain('jam')
   })
   test('rank exact before begins before contains', () => {
     const hits = searchReadings(ix.readings, 'tumen')
