@@ -163,6 +163,16 @@ describe('readings', () => {
     expect(foldReading('ədʒən')).toBe(foldQuery('ezhen'))
     expect(foldReading('ʃan')).toBe(foldQuery('shan'))
   })
+  test('fold the ǰ, š and č of Yoshiike and Nakamura with the dictionary letters', () => {
+    expect(foldReading('ədʒən')).toBe(foldQuery('eǰen'))
+    expect(foldReading('ʃan')).toBe(foldQuery('šan'))
+    expect(foldReading('tʃo')).toBe(foldQuery('čo'))
+    expect(searchReadings(ix.readings, 'šan').map(hit => hit.raw)).toContain('ʃan')
+    expect(searchReadings(ix.readings, 'čo').map(hit => hit.raw)).toContain('tʃo')
+    const hits = searchReadings(ix.readings, 'ǰa').map(hit => hit.raw)
+    expect(hits).toContain('dʒa')
+    expect(hits).not.toContain('jam')
+  })
   test('rank exact before begins before contains', () => {
     const hits = searchReadings(ix.readings, 'tumen')
     expect(hits[0]).toMatchObject({ char: '\u{18E01}', tier: 0 })

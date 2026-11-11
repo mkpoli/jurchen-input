@@ -1,6 +1,7 @@
 // Reading search over the one system Unicode records: the readings of Jin Qizong's dictionary,
 // written in IPA-like letters. A reader rarely has ʃ or ə to hand, so readings and queries are both
 // folded to plain letters: ə is typed e, ʃ s or sh, dʒ j or zh, tʃ c or ch, ŋ ng, ï i, x and ç h.
+// The ǰ, š and č of Yoshiike and Nakamura's transcriptions (KOTONOHA 243, 2023) fold the same way.
 
 /** @typedef {{ char: string, raw: string, folded: string }} Reading */
 /** @typedef {{ char: string, raw: string, tier: number }} ReadingHit */
@@ -9,7 +10,7 @@ export const TIERS = /** @type {const} */ (['exact', 'begins', 'within'])
 
 /** @param {string} text */
 const common = text => text.toLowerCase().normalize('NFC')
-  .replace(/dʒ/g, 'J').replace(/tʃ/g, 'C').replace(/ʃ|ɕ/g, 's').replace(/ʒ|ʑ/g, 'J').replace(/ə|ɛ/g, 'e').replace(/ï/g, 'i')
+  .replace(/dʒ|ǰ/g, 'J').replace(/tʃ|č/g, 'C').replace(/ʃ|ɕ|š/g, 's').replace(/ʒ|ʑ/g, 'J').replace(/ə|ɛ/g, 'e').replace(/ï/g, 'i')
   .replace(/ŋ/g, 'ng').replace(/[xç]/g, 'h').replace(/[\s.()'’·-]/g, '')
 
 /** A reading as the search holds it. The source's j is /j/, kept apart from dʒ as y. @param {string} raw */
