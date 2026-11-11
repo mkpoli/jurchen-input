@@ -14,6 +14,8 @@ check its record, and put it into your text.
 - **Draw**: a drawing pad ranked by glyph shape against the Alari face. It is rough, and the page
   says so.
 - **Radicals**: Unicode's 51 radicals, each with its characters by stroke count.
+- **Code chart**: every character and radical by code point, with the blocks' occupancy and the
+  characters each radical holds.
 - **Reading**: the readings of Jin Qizong's dictionary, with phonetic letters or plain ones.
 - **Syllables**: the one-syllable readings laid out like a kana chart, by initial and rime.
 - **Transcribe**: the text with the reading of each character under it.

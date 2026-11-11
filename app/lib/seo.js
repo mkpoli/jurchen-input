@@ -22,6 +22,10 @@ export const PAGE_SEO = {
     title: 'Radicals — Jurchen Input',
     description: 'Browse the 914 Jurchen characters of Unicode 18 under their 51 radicals, by stroke count.',
   },
+  codes: {
+    title: 'Code chart — Jurchen Input',
+    description: 'Every Jurchen character and radical by Unicode code point, with block occupancy and radical counts.',
+  },
   reading: {
     title: 'Reading — Jurchen Input',
     description: 'Type a reading from Jin Qizong’s Jurchen dictionary, with or without phonetic letters, and see the characters read so.',
