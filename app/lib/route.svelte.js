@@ -13,6 +13,7 @@ export const GROUPS = /** @type {const} */ ([
       { path: 'strokes', label: 'nav.strokes', hint: 'nav.strokes.hint' },
       { path: 'draw', label: 'nav.draw', hint: 'nav.draw.hint' },
       { path: 'radicals', label: 'nav.radicals', hint: 'nav.radicals.hint' },
+      { path: 'codes', label: 'nav.codes', hint: 'nav.codes.hint' },
     ],
   },
   {

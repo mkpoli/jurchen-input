@@ -41,7 +41,7 @@ async function step(name, check) {
   }
 }
 
-const PAGES = ['', 'strokes', 'draw', 'radicals?q=31', 'reading?q=tumen', 'syllables', 'syllables?q=all', 'transcribe', `convert?q=${encodeURIComponent('\uE3C7\uE004\u{F1C72}\uE6F4\uE0DC')}`, 'about']
+const PAGES = ['', 'strokes', 'draw', 'radicals?q=31', 'codes', 'reading?q=tumen', 'syllables', 'syllables?q=all', 'transcribe', `convert?q=${encodeURIComponent('\uE3C7\uE004\u{F1C72}\uE6F4\uE0DC')}`, 'about']
 const VIEWS = [
   { name: 'desktop', width: 1440, height: 900 },
   { name: 'phone', width: 390, height: 844 },
@@ -205,6 +205,30 @@ await step('card: an origin is cited, and a character with none says so', async 
   assert.match(await page.locator('aside.card').innerText(), /No source open to this site/)
   await page.goto(`${SITE}/?c=18E01`, { waitUntil: 'networkidle' })
   assert.match(await page.locator('aside.card').innerText(), /all Jurchen numerals/)
+})
+
+await step('codes: a page starts on a code row, and a cell copies its character', async () => {
+  await page.goto(`${SITE}/codes`, { waitUntil: 'networkidle' })
+  assert.equal(await page.locator('aside.card').count(), 0, 'the code chart keeps the card column out')
+  const radicals = page.locator('#radicals')
+  assert.equal(await radicals.locator('.chart .cell').count(), 64)
+  assert.equal(await radicals.locator('.chart .cell.blank').count(), 13)
+  assert.match(await radicals.locator('.range').innerText(), /U\+191A0–U\+191D2/)
+  const first = radicals.locator('.cell').first()
+  assert.equal(await first.locator('.ui-script').textContent(), '\u{191A0}')
+  await first.click()
+  await page.locator('.ui-toast').waitFor()
+  assert.equal(await page.evaluate(() => navigator.clipboard.readText()), '\u{191A0}')
+  const characters = page.locator('#characters')
+  assert.equal(await characters.locator('.chart .cell').count(), 256)
+  assert.match(await characters.locator('.range').innerText(), /U\+18E00–U\+18EFF/)
+  for (const range of ['U+18F00–U+18FFF', 'U+19000–U+190FF', 'U+19100–U+19191']) {
+    await characters.getByRole('button', { name: 'Next page' }).click()
+    assert.equal(await characters.locator('.range').innerText(), range)
+  }
+  assert.equal(await characters.locator('.chart .cell').count(), 160)
+  assert.equal(await characters.locator('.chart .cell.blank').count(), 14)
+  await page.screenshot({ path: join(SHOTS, 'flow-codes.png') })
 })
 
 await step('radicals: choosing one lists its characters', async () => {
