@@ -10,6 +10,8 @@ Retrieved 2026-11-05 unless noted.
 | [JurchenSources.txt](https://www.unicode.org/Public/18.0.0/ucd/JurchenSources.txt), Unicode 18.0 | radical and total strokes of 914 characters, source reference, 806 readings from Jin Qizong 1984, 30 numeric values | [Unicode Terms of Use](https://www.unicode.org/terms_of_use.html) | `scripts/build_jurchen_data.py` |
 | Alari Jurchen Rime table, `Alari_jurc.dict.yaml` version 2026.05.29, schema version 2026.05.28, by Yehenara Ayasala, Sulfa and Tunggiya Uju, [朝花·夕拾 電子藏書閣](https://dorontu.com/#/cloud) folder 女真文资料/女真文rime输入法 | 1,502 stroke codes: 914 characters, 51 radicals, 537 variant sequences | none stated; published for readers to download and use | `scripts/build_jurchen_data.py` |
 | Alari Xuwasun Jurchen, `AlariXuwasunJurchen-Regular（公测版）.otf`, name table version 0.000 of 2026-10-12, by Sulfa, Dooran and Raxon7, same site, folder 女真文资料/女真文字体 | glyphs for 914 + 51 code points, 537 variants through VS1–VS5 and ss01–ss05 | SIL OFL 1.1, stated in the font's name table | `scripts/build_jurchen_font.py`, `scripts/build_jurchen_shapes.py` |
+| P. G. von Möllendorff, *A Manchu Grammar, with Analysed Texts*, Shanghai, 1892, §3 Numerals, pp. 6–7 ([scan on Internet Archive](https://archive.org/details/cu31924023341112/page/n17)) | the Manchu cardinal numerals 1–10, 20, 30–100 and 1,000–10,000; nothing on Jurchen | public domain | `data/manchu/numerals.tsv` |
+| Noto Sans Mongolian, v3.103, from [Google Fonts](https://github.com/google/fonts/tree/main/ofl/notosansmongolian) | the Manchu alphabet, drawn as the font's OpenType shaping gives it | [SIL OFL 1.1](https://github.com/google/fonts/blob/main/ofl/notosansmongolian/OFL.txt) | `scripts/build_manchu_font.py` |
 | Alari (Sulfa & Ayasala), 「没人给女真文做字体和输入法？那我们自己来」, [WeChat article](https://mp.weixin.qq.com/s/YaUP6bq4xt_18ywlRxCQpA), read from a copy of its text, since the page refuses automated fetches; its date was not seen | the stroke definitions on the Strokes page, the account of how the font and variants were made | cited | `app/pages/Strokes.svelte` |
 | 柳突破, 「Alari 仿宋女真文字体快闪，庆祝女真文正式入U」, [Bilibili](https://www.bilibili.com/video/BV1odec6pEqp/), 2026-09-16 | points to the download site | cited | none |
 | [WG2 N5261R](https://www.unicode.org/L2/L2024/24139-n5261r-jurchen-ideographs.pdf), Andrew West, Sun Bojun and the Zhonghua Ziku project, 2024-06-12, Table 3 | four characters written as the Chinese character of the same meaning in Jin inscriptions | cited | `data/etymology/origins.tsv` |
@@ -28,6 +30,7 @@ SHA-256 of the files as downloaded:
 - `Alari_jurc.dict.yaml`: `16952da9ea874bf2418fef63febdc8fca3e9322adab97c4a38181b0dd684bca4`
 - `Alari_jurc.schema.yaml`: `5d53d3fd926b80bedfba7bbec5b9d7bdaf3c0104432f31039526f436fcfc1451`
 - `AlariXuwasunJurchen-Regular.otf`: `41c71fc276e80044034e9719779c7cbcb2ec9f4329e49eae9e37d27b06469df7`
+- `NotoSansMongolian-Regular.ttf`: `caea465b44ff4a2c0ab7bc4a2da4abcb1cf10658d70c5e49f08c9e07ae589c3a`
 
 Unicode's text says the chart's representative glyphs are not prescriptive, and the article says the
 font is a mechanical restyling of the forms in the encoding proposal: its forms are the proposal's
@@ -45,6 +48,21 @@ Variant sequences: `StandardizedVariants.txt` of Unicode 18.0 has no Jurchen ent
 the core specification does not mention them. The sequences here are Alari's convention. In the font,
 each of the 537 agrees with the matching style set (`ss01`–`ss05`); this was checked on the font's own
 tables.
+
+## Manchu numerals
+
+Each numeral's card gives the Manchu word for the same number, in Möllendorff's letters and in the
+Manchu script. Only the 30 characters whose value Unicode records have one.
+
+- The words are the cardinals in Möllendorff 1892, pp. 6–7. 11–19 are compounds there (`juwan emu`,
+  `juwan juwe`, …) except `tofohon` for 15, while Jin Qizong's readings for the Jurchen characters are
+  single words (`omʃo`, `dʒïrxon`, …); the card shows the Manchu form for the value, not a cognate.
+- That grammar prints no script, so the script spelling of each word comes from its Manchu entry in
+  [Wiktionary](https://en.wiktionary.org/wiki/Category:Manchu_lemmas) (CC BY-SA), variation selectors
+  included (`duin`, `dehi`, `tanggū`). `nadan` has no entry in the script; its script is the form its
+  romanization entry points to, `ᠨᠠᡩᠠᠨ`.
+- Noto Sans Mongolian is the face that draws them. Its `unicode-range` is the Manchu block, so the
+  browser fetches it only when a card with a Manchu word opens.
 
 ## Older encodings
 

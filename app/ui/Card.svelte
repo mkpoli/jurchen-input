@@ -31,12 +31,17 @@
     { label: t('card.enc.draft'), items: encodings.draft },
   ].filter(row => row.items.length) : [])
   const origins = $derived(ready && base ? ix.origins.get(base) ?? [] : [])
+  const manchu = $derived(ready && base ? ix.manchu.get(base) : undefined)
   /** The works an origin is cited to. */
   const WORKS = /** @type {Record<string, { label: string, url: string }>} */ ({
     n5261r: { label: 'card.origin.cite.n5261r', url: 'https://www.unicode.org/L2/L2024/24139-n5261r-jurchen-ideographs.pdf' },
     kiyose: { label: 'card.origin.cite.kiyose', url: 'https://www.chikyukotobamura.org/muse/wr_easia_9.html' },
     west2012: { label: 'card.origin.cite.west2012', url: 'https://www.babelstone.co.uk/Blog/2012/12/one-to-twenty-in-jurchen-khitan-and-lute.html' },
     jinjin1980: { label: 'card.origin.cite.jinjin1980', url: 'https://archive.org/download/Khitan-et-Jurchen-languages/%E5%A5%B3%E7%9C%9F%E8%AF%AD%E8%A8%80%E6%96%87%E5%AD%97%E7%A0%94%E7%A9%B6.pdf#page=67' },
+  })
+  /** The works a Manchu word is cited to. */
+  const MANCHU_WORKS = /** @type {Record<string, { label: string, url: string }>} */ ({
+    mollendorff1892: { label: 'card.manchuSource.mollendorff1892', url: 'https://archive.org/details/cu31924023341112/page/n17' },
   })
   const address = $derived(char ? `${location.origin}${link('', char)}` : '')
 </script>
@@ -136,6 +141,21 @@
       </section>
     {/if}
 
+    {#if manchu}
+      <section>
+        <h3 class="ui-label">{t('card.manchu')}</h3>
+        <div class="manchu">
+          <span class="manchu-script" lang="mnc" aria-label={manchu.latin}>
+            {#each manchu.script.split(' ') as word (word)}<span class="manchu-word">{word}</span>{/each}
+          </span>
+          <span class="manchu-facts">
+            <span class="manchu-latin">{manchu.latin}</span>
+            <a class="manchu-source" href={MANCHU_WORKS[manchu.work].url}>{t(MANCHU_WORKS[manchu.work].label)}</a>
+          </span>
+        </div>
+      </section>
+    {/if}
+
     {#if encodingRows.length}
       <section>
         <h3 class="ui-label">{t('card.encodings')}</h3>
@@ -205,6 +225,12 @@
   .code{padding:4px 8px;border:1px solid var(--ui-color-border-strong);border-radius:var(--ui-radius-sm);background:var(--ui-color-surface-sunken);font-size:var(--ui-text-md)}
   .code:hover{border-color:var(--ui-color-ink-muted)}
   .type{display:inline-flex;align-items:center;min-block-size:24px;padding-inline:2px;font-size:var(--ui-text-xs);margin-inline-start:var(--ui-space-2xs)}
+  .manchu{display:flex;align-items:center;gap:var(--ui-space-lg)}
+  .manchu-script{display:inline-flex;gap:6px;font-family:var(--ui-font-manchu);font-size:28px;line-height:1.1;color:var(--ui-color-ink)}
+  .manchu-word{writing-mode:vertical-lr;text-orientation:sideways}
+  .manchu-facts{display:grid;gap:2px;padding-bottom:2px;min-inline-size:0}
+  .manchu-latin{font-family:var(--ui-font-mono);font-size:var(--ui-text-md)}
+  .manchu-source{font-size:var(--ui-text-2xs);color:var(--ui-color-ink-muted)}
   .readings{border-collapse:collapse;inline-size:100%;font-size:var(--ui-text-sm)}
   .readings th{inline-size:32%;padding:var(--ui-space-2xs) var(--ui-space-sm) var(--ui-space-2xs) 0;text-align:start;font-weight:var(--ui-weight-normal);color:var(--ui-color-ink-muted);vertical-align:top}
   .readings td{padding:var(--ui-space-2xs) 0;font-family:var(--ui-font-serif);font-size:var(--ui-text-md)}
