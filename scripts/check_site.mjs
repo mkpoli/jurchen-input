@@ -92,6 +92,23 @@ await step('the font draws the block and a variant differs from its base', async
   assert.deepEqual(result, { has: true, differs: true, blank: false })
 })
 
+await step('card: a numeral names its Manchu word, in letters and in the script', async () => {
+  await page.goto(`${SITE}/?c=18E01`, { waitUntil: 'networkidle' })
+  await page.evaluate(() => document.fonts.ready)
+  assert.equal(await page.locator('aside.card .manchu-latin').textContent(), 'tumen')
+  const drawn = await page.evaluate(async () => {
+    const word = '\u1868\u1860\u182E\u185D\u1828'
+    await document.fonts.load('28px "Noto Sans Mongolian"', word)
+    return document.fonts.check('28px "Noto Sans Mongolian"', word)
+  })
+  assert.ok(drawn, 'the Manchu face is not loaded')
+  const box = await page.locator('aside.card .manchu-script').boundingBox()
+  assert.ok(box && box.width > 20 && box.height > 40, `the script is ${JSON.stringify(box)}`)
+  await page.screenshot({ path: join(SHOTS, 'flow-manchu.png') })
+  await page.goto(`${SITE}/?c=18E00`, { waitUntil: 'networkidle' })
+  assert.equal(await page.locator('aside.card .manchu').count(), 0)
+})
+
 await step('strokes: a code lists candidates, Space adds the first', async () => {
   await page.goto(`${SITE}/strokes`, { waitUntil: 'networkidle' })
   await page.locator('[data-primary]').pressSequentially('hhz')

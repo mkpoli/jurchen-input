@@ -23,6 +23,7 @@
     "build:legacy-map": "uv run scripts/build_legacy_map.py",
     "build:shapes": "uv run scripts/build_jurchen_shapes.py",
     "build:font": "uv run scripts/build_jurchen_font.py",
+    "build:font:manchu": "uv run scripts/build_manchu_font.py",
     "build:icons": "bun scripts/make-icons.mjs",
     "check:site": "bun scripts/check_site.mjs"
   },
