@@ -23,6 +23,8 @@
       <dd>{@html t('about.variants')}</dd>
       <dt>{t('about.encodingsTitle')}</dt>
       <dd>{@html t('about.encodings')}</dd>
+      <dt>{t('about.manchuTitle')}</dt>
+      <dd>{@html t('about.manchu')}</dd>
       <dt>{t('about.convertTitle')}</dt>
       <dd>{@html t('about.convert')}</dd>
       <dt>{t('about.originTitle')}</dt>

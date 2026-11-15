@@ -6,3 +6,12 @@
   font-display: swap;
   unicode-range: U+18E00-1919F, U+191A0-191DF, U+FE00-FE04;
 }
+
+/* The Manchu face, Noto Sans Mongolian, OFL 1.1. The numeral comparison draws its words with it;
+   the block's range keeps the two faces from competing for each other's characters. */
+@font-face {
+  font-family: 'Noto Sans Mongolian';
+  src: url('/fonts/NotoSansMongolian-Regular.woff2') format('woff2');
+  font-display: swap;
+  unicode-range: U+1800-18AF;
+}

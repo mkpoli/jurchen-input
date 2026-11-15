@@ -6,7 +6,8 @@
 Radical, strokes, source, reading and numeric value come from Unicode's JurchenSources.txt; stroke
 codes, with the variant sequences they name, come from Alari's Rime table; references to the older
 encodings come from data/encodings/characters.tsv; character origins come from
-data/etymology/origins.tsv. A sequence the table lists and the font does not draw stops the build.
+data/etymology/origins.tsv; the Manchu numeral of each numeric character comes from
+data/manchu/numerals.tsv. A sequence the table lists and the font does not draw stops the build.
 """
 import csv
 import gzip
@@ -20,6 +21,7 @@ UCD = ROOT / 'data/unicode/JurchenSources-18.0.0.txt'
 TABLE = ROOT / 'data/alari/Alari_jurc.dict.yaml'
 ENCODINGS = ROOT / 'data/encodings/characters.tsv'
 ORIGINS = ROOT / 'data/etymology/origins.tsv'
+MANCHU = ROOT / 'data/manchu/numerals.tsv'
 OUT = ROOT / 'app/data/jurchen.json.gz'
 CHARS = range(0x18E00, 0x19192)
 RADICALS = range(0x191A0, 0x191D3)
@@ -77,6 +79,14 @@ def main():
         origins = [[chr(int(row['unicode'], 16)), row['relation'], row['source_char'], row['work']]
                    for row in csv.DictReader(source_file, delimiter='\t')]
     assert all(0x18E00 <= ord(char) <= 0x19191 for char, *_ in origins)
+    with MANCHU.open(encoding='utf-8', newline='') as source_file:
+        manchu = [[chr(int(row['unicode'], 16)), row['manchu'], row['script'], row['work']]
+                  for row in csv.DictReader(source_file, delimiter='\t')]
+    numerals = {entry[0] for entry in rows if entry[5] is not None}
+    assert {char for char, *_ in manchu} == numerals, 'every numeral, and only a numeral, has a Manchu word'
+    for char, latin, script, work in manchu:
+        assert latin and work
+        assert all(c == ' ' or 0x180B <= ord(c) <= 0x180D or 0x1800 <= ord(c) <= 0x18AF for c in script), char
     document = {
         'unicode': '18.0.0',
         'table': {'name': 'Alari_jurc', 'version': '2026.05.29', 'sha256': hashlib.sha256(TABLE.read_bytes()).hexdigest()},
@@ -85,6 +95,7 @@ def main():
         'codes': codes,
         'encodings': encodings,
         'origins': origins,
+        'manchu': manchu,
     }
     raw = json.dumps(document, ensure_ascii=False, separators=(',', ':')).encode()
     OUT.parent.mkdir(parents=True, exist_ok=True)

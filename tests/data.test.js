@@ -20,12 +20,15 @@ describe('records', () => {
     expect(ix.codes.size).toBe(1502)
     expect(ix.readings.length).toBe(806)
     expect(ix.numerals.size).toBe(30)
+    expect(ix.manchu.size).toBe(30)
     expect(ix.byRadical.size).toBe(51)
   })
   test('hold the values of JurchenSources.txt', () => {
     const entry = ix.entries.get('\u{18E01}')
     expect(entry).toMatchObject({ radical: 1, strokes: 3, reading: 'tumən', numeric: 10000 })
     expect(ix.numerals.get(3)).toBe('\u{19129}')
+    expect(ix.manchu.get('\u{18E01}')).toMatchObject({ latin: 'tumen', work: 'mollendorff1892' })
+    expect(ix.manchu.get('\u{19129}')).toMatchObject({ latin: 'ilan' })
   })
   test('give each radical its number', () => {
     expect(radicalNumber('\u{191A0}')).toBe(1)

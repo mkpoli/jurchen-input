@@ -22,7 +22,8 @@ check its record, and put it into your text.
 - **Convert**: text in an older font's Private Use codes, turned into Unicode 18, and back.
 
 The card of a character shows its code points, stroke code, variant forms, reading, numeric value
-and source reference. The text stays in the browser and copies as text, code points, stroke codes,
+and source reference. A numeral's card also gives the Manchu word for the same number, in letters and
+in the Manchu script. The text stays in the browser and copies as text, code points, stroke codes,
 or with every variant put back to its base form.
 
 ## Data
@@ -30,10 +31,13 @@ or with every variant put back to its base form.
 Every source, with what it gives and its terms, is in [`docs/materials.md`](docs/materials.md).
 
 - `app/data/jurchen.json.gz`, built by `bun run build:data` from
-  `data/unicode/JurchenSources-18.0.0.txt` and `data/alari/Alari_jurc.dict.yaml`.
+  `data/unicode/JurchenSources-18.0.0.txt`, `data/alari/Alari_jurc.dict.yaml` and
+  `data/manchu/numerals.tsv`.
 - `app/data/jurchen-shapes.bin.gz`, pen lines for the drawing pad, built by `bun run build:shapes`.
 - `app/public/fonts/AlariXuwasunJurchen-Regular.woff2`, built by `bun run build:font` from the OFL
   font in `data/alari/`.
+- `app/public/fonts/NotoSansMongolian-Regular.woff2`, built by `bun run build:font:manchu` from the
+  OFL font in `data/manchu/`.
 
 The reference font of the Unicode code charts is not used.
 
