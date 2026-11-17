@@ -23,7 +23,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'data/variants/sources.tsv'
 SIGLA = ROOT / 'data/variants/sigla.tsv'
-SUPERSCRIPT = '¹²³⁴⁵'
 
 
 def words(page, path):
@@ -81,8 +80,8 @@ def table_rows(path):
                 continue  # a code in a footnote, not a table row
             start, stop = forms[0] - 5, min(forms[-1] + 26, end - 14, 556)
             lines = []
-            for xx, yy, _x1, _y1, text in sorted((x, y, x1, y1, t) for x, y, x1, y1, t in word_list
-                                                if source_x - 3 < x < source_x + 60 and start < y < stop):
+            for yy, xx, text in sorted((y, x, t) for x, y, _x1, _y1, t in word_list
+                                       if source_x - 3 < x < berlin_x - 3 and start < y < stop):
                 if lines and abs(lines[-1][0] - yy) < 2:
                     lines[-1][1].append((xx, text))
                 else:

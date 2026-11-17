@@ -47,7 +47,7 @@
           {/each}
         </tbody>
       </table>
-      <p class="ui-hint"><a href="https://www.unicode.org/L2/L2024/24139-n5261r-jurchen-ideographs.pdf#page=23">{t('about.siglaTable')}</a></p>
+      <p class="ui-hint"><a href="https://www.unicode.org/L2/L2024/24139-n5261r-jurchen-ideographs.pdf#page=19">{t('about.siglaTable')}</a></p>
     {/if}
   </section>
 
