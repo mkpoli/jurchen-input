@@ -125,7 +125,7 @@
               <tr data-open={row.form === char ? '' : undefined}>
                 <th scope="row">
                   <button class="form-open" type="button" title={t('card.formOpen')} onclick={() => choose(row.form)} ondblclick={() => put(row.form)}>
-                    <span class="ui-script form-glyph">{row.form}</span>
+                    <span class="ui-script form-glyph" lang="juc">{row.form}</span>
                     <span class="form-label ui-mono">{variantOf(row.form) ? `VS${variantOf(row.form)}` : t('card.baseForm')}</span>
                   </button>
                 </th>
