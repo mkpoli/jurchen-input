@@ -219,7 +219,7 @@
   "khitan.nineLead": "清濑把这九字与汉字、契丹大字、女真文字上下并列。这是字形的比较，能在多大程度上说明承袭，仍在研究之中。",
   "khitan.nineAlt": "汉字“天 年 日 月 龙 人 听 中 福”之下并列契丹大字与女真文字字形的图。",
   "khitan.nineCaption": "自上而下：汉字、契丹大字、女真文字。",
-  "khitan.readingNote": "读音据金启孮《女真文辞典》（1984），并依Unicode数据转写。",
+  "khitan.readingNote": "读音据金启孮《女真文辞典》（1984），并依Unicode数据转写。卡片是本站为各字形配的码位；图未标码位。",
   "khitan.directionsTitle": "四个方向",
   "khitan.directionsLead": "方向各用两字书写：词干之后，东西加 -ši，南北加 -ti。",
   "khitan.directionsAlt": "东南西北的女真文字及其读音图。",

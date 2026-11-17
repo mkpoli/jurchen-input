@@ -219,7 +219,7 @@
   "khitan.nineLead": "Kiyose prints these nine with the Chinese character and a Khitan large script form above the Jurchen one. The likeness is a comparison of shapes; how far it shows descent is still under study.",
   "khitan.nineAlt": "Chinese glosses 天 年 日 月 龍 人 聽 中 福 above two rows: the Khitan large script forms and the Jurchen forms.",
   "khitan.nineCaption": "Rows: Chinese, Khitan large script, Jurchen.",
-  "khitan.readingNote": "Readings follow Jin Qizong’s dictionary (1984), as transcribed in Unicode’s data.",
+  "khitan.readingNote": "Readings follow Jin Qizong’s dictionary (1984), as transcribed in Unicode’s data. The cards tie each form to a code point; the figure prints none.",
   "khitan.directionsTitle": "Four directions",
   "khitan.directionsLead": "A direction is written with two characters: the stem, then -ši for east and west or -ti for south and north.",
   "khitan.directionsAlt": "Jurchen forms for east, west, south and north, each with its reading.",

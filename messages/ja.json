@@ -219,7 +219,7 @@
   "khitan.nineLead": "清瀬はこの九字を、漢字と契丹大字を女真文字の上に置いて示した。字形の比較であり、どこまで継承を示すかはなお研究の途上にある。",
   "khitan.nineAlt": "漢字の「天 年 日 月 龍 人 聽 中 福」の下に、契丹大字と女真文字の字形を並べた図。",
   "khitan.nineCaption": "上から漢字・契丹大字・女真文字。",
-  "khitan.readingNote": "読みは金啓孮『女真文辞典』（1984）に基づき、Unicodeのデータに従う。",
+  "khitan.readingNote": "読みは金啓孮『女真文辞典』（1984）に基づき、Unicodeのデータに従う。カードは各字形をコードポイントに対応させたもので、図にはコードポイントがない。",
   "khitan.directionsTitle": "四方向",
   "khitan.directionsLead": "方角は二字で書く。語幹のあとに、東西は -ši、南北は -ti が付く。",
   "khitan.directionsAlt": "東西南北の女真文字と、その読みを並べた図。",
