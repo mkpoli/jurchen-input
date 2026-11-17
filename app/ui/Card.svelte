@@ -2,13 +2,13 @@
   // Everything recorded about the open character, arranged around using it: the actions come first,
   // then what helps a reader confirm it is the one they mean, then the characters near it.
   import { db } from '../lib/db.svelte.js'
-  import { ix, entryOf, radicalNumber, readingOf } from '../lib/index.js'
+  import { ix, entryOf, radicalNumber, readingOf, siglumName } from '../lib/index.js'
   import { baseOf, codePoint, isRadical, MARK, readSource, variantOf } from '../lib/script.js'
   import G from './G.svelte'
   import { route, link } from '../lib/route.svelte.js'
   import { ui, put, choose } from '../lib/ui.svelte.js'
   import { copy } from '../lib/clip.svelte.js'
-  import { t } from '../lib/i18n.svelte.js'
+  import { i18n, t } from '../lib/i18n.svelte.js'
 
   const char = $derived(route.c)
   const ready = $derived(db.status === 'ready')
@@ -44,6 +44,10 @@
     mollendorff1892: { label: 'card.manchuSource.mollendorff1892', url: 'https://archive.org/details/cu31924023341112/page/n17' },
   })
   const address = $derived(char ? `${location.origin}${link('', char)}` : '')
+  const formRows = $derived(forms.map(form => ({ form, source: ix.formSources.get(form) })))
+  const TABLE4 = 'https://www.unicode.org/L2/L2024/24139-n5261r-jurchen-ideographs.pdf'
+  /** The Table 4 page that prints a form's glyph image and sources. @param {number} page */
+  const table4Page = page => `${TABLE4}#page=${page}`
 </script>
 
 {#if ui.sheet}
@@ -109,6 +113,39 @@
           {/each}
         </div>
         <p class="ui-hint">{t('card.formsNote')}</p>
+      </section>
+    {/if}
+
+    {#if formRows.length && !isRadical(base)}
+      <section>
+        <h3 class="ui-label">{t('card.formSources')}</h3>
+        <table class="form-sources">
+          <tbody>
+            {#each formRows as row (row.form)}
+              <tr data-open={row.form === char ? '' : undefined}>
+                <th scope="row">
+                  <button class="form-open" type="button" title={t('card.formOpen')} onclick={() => choose(row.form)} ondblclick={() => put(row.form)}>
+                    <span class="ui-script form-glyph">{row.form}</span>
+                    <span class="form-label ui-mono">{variantOf(row.form) ? `VS${variantOf(row.form)}` : t('card.baseForm')}</span>
+                  </button>
+                </th>
+                <td>
+                  {#if row.source?.sources.length}
+                    <span class="source-list">
+                      {#each row.source.sources as siglum (siglum)}
+                        <span class="source"><b class="ui-mono">{siglum}</b> {siglumName(siglum, i18n.locale)}</span>
+                      {/each}
+                    </span>
+                  {:else}
+                    <span class="form-none">{t('card.formSourceNone')}</span>
+                  {/if}
+                  {#if row.source}<a class="source-page" href={table4Page(row.source.page)} target="_blank" rel="noreferrer" title={t('card.formSourceImage')}>{t('card.formSourcePage', { page: row.source.page })}</a>{/if}
+                </td>
+              </tr>
+            {/each}
+          </tbody>
+        </table>
+        <p class="ui-hint">{t('card.formSourcesNote')}</p>
       </section>
     {/if}
 
@@ -241,6 +278,20 @@
   .ref{padding:1px 4px;border:0;border-radius:var(--ui-radius-xs);background:none;color:inherit;font:inherit}
   .ref:hover{background:var(--ui-color-surface-hover)}
   .origins{display:grid;gap:var(--ui-space-xs);margin:0;padding-inline-start:1.1em;font-size:var(--ui-text-sm);line-height:var(--ui-leading-normal)}
+  .form-sources{border-collapse:collapse;inline-size:100%;font-size:var(--ui-text-sm)}
+  .form-sources tr + tr{border-top:1px solid var(--ui-color-border)}
+  .form-sources tr[data-open]{background:var(--ui-color-accent-soft)}
+  .form-sources th,.form-sources td{padding:var(--ui-space-xs) 0;text-align:start;vertical-align:top}
+  .form-sources th{inline-size:76px;padding-inline-end:var(--ui-space-sm)}
+  .form-open{display:grid;gap:1px;justify-items:center;padding:3px 5px;border:0;border-radius:var(--ui-radius-sm);background:none}
+  .form-open:hover{background:var(--ui-color-surface-hover)}
+  .form-glyph{font-size:30px;line-height:1.05}
+  .form-label{font-size:var(--ui-text-2xs);color:var(--ui-color-ink-muted);white-space:nowrap}
+  .source-list{display:flex;flex-wrap:wrap;gap:2px var(--ui-space-sm);line-height:1.45}
+  .source{white-space:normal;overflow-wrap:break-word}
+  .source b{font-weight:var(--ui-weight-semibold)}
+  .form-none{color:var(--ui-color-ink-muted)}
+  .source-page{display:block;padding-top:2px;padding-block-end:2px;white-space:nowrap;font-size:var(--ui-text-2xs)}
   .rel{gap:3px}
   .rel .ui-tile[data-open]{background:var(--ui-color-accent-soft)}
   .rel .ui-tile-note{font-size:var(--ui-text-2xs)}
@@ -248,6 +299,12 @@
   .more{font-size:var(--ui-text-xs)}
   .noreading{padding-block:var(--ui-space-xl);border-top:1px solid var(--ui-color-border)}
   .credit{border-top:1px solid var(--ui-color-border);padding-top:var(--ui-space-lg);font-size:var(--ui-text-2xs);line-height:1.6;margin-top:var(--ui-space-xl)}
+  @media (max-width:700px){
+    .form-sources,.form-sources tbody{display:block}
+    .form-sources tr{display:grid;grid-template-columns:64px minmax(0,1fr);column-gap:var(--ui-space-sm);padding:var(--ui-space-xs) 0}
+    .form-sources th{grid-row:1;inline-size:auto;padding:0}
+    .form-sources td{grid-column:2;padding:0}
+  }
   @media (max-width:900px){
     .record{padding:var(--ui-space-lg) var(--ui-space-lg) var(--ui-space-5xl)}
     .head{gap:var(--ui-space-lg)}

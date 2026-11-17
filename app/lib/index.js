@@ -4,7 +4,9 @@ import { foldReading } from './reading.js'
 
 /** @typedef {{ char: string, radical: number, strokes: number, source: string, reading: string, numeric: number | null }} Entry */
 /** References from before Unicode 18, each list space-separated. @typedef {{ jin1984: string[], xrefs: string[], babelstone: string[], zhzk: string[], draft: string[] }} Encodings */
-/** @typedef {{ unicode: string, table: { name: string, version: string, sha256: string }, rows: [string, number, number, string, string | null, number | null][], radicals: string[], codes: [string, string][], origins: [string, string, string, string][], encodings: [string, string, string, string, string, string][], manchu: [string, string, string, string][] }} Records */
+/** The sigla of one glyph form and the Table 4 page that prints it. @typedef {{ sources: string[], page: number }} FormSource */
+/** A siglum's name in the languages the site writes. @typedef {{ hant: string, hans: string, en: string }} Siglum */
+/** @typedef {{ unicode: string, table: { name: string, version: string, sha256: string }, rows: [string, number, number, string, string | null, number | null][], radicals: string[], codes: [string, string][], origins: [string, string, string, string][], encodings: [string, string, string, string, string, string][], manchu: [string, string, string, string][], variantSources: [string, number, string[], number][], sigla: [string, string, string, string][] }} Records */
 /** What a source says about where a character comes from. @typedef {{ relation: string, source: string, work: string }} Origin */
 /** A Manchu word for the same number: its Möllendorff letters, its Manchu script, and the work it comes from. @typedef {{ latin: string, script: string, work: string }} Manchu */
 
@@ -22,6 +24,8 @@ export const ix = {
   /** The characters each of those references names. @type {Map<string, string[]>} */ references: new Map(),
   /** What the sources say about each character's origin. @type {Map<string, Origin[]>} */ origins: new Map(),
   /** The Manchu word of the same number, where one is recorded. @type {Map<string, Manchu>} */ manchu: new Map(),
+  /** The source sigla of each form, base form and variants alike. @type {Map<string, FormSource>} */ formSources: new Map(),
+  /** The name of each siglum. @type {Map<string, Siglum>} */ sigla: new Map(),
 }
 
 const order = (/** @type {string} */ a, /** @type {string} */ b) => (a.codePointAt(0) ?? 0) - (b.codePointAt(0) ?? 0) || variantOf(a) - variantOf(b)
@@ -43,6 +47,13 @@ export function fill(records) {
   ix.origins = new Map()
   for (const [char, relation, source, work] of records.origins) ix.origins.set(char, [...(ix.origins.get(char) ?? []), { relation, source, work }])
   ix.manchu = new Map(records.manchu.map(([char, latin, script, work]) => [char, { latin, script, work }]))
+  ix.formSources = new Map()
+  for (const [code, selector, sources, page] of records.variantSources) {
+    const char = String.fromCodePoint(parseInt(code, 16))
+    const sequence = selector ? char + String.fromCodePoint(0xFE00 + selector - 1) : char
+    ix.formSources.set(sequence, { sources, page })
+  }
+  ix.sigla = new Map(records.sigla.map(([siglum, hant, hans, en]) => [siglum, { hant, hans, en }]))
   ix.byRadical = new Map()
   ix.numerals = new Map()
   ix.strokes = new Map()
@@ -70,6 +81,15 @@ export const radicalNumber = seq => (isRadical(seq) ? (seq.codePointAt(0) ?? 0) 
 
 /** The record of a sequence's character. @param {string} seq */
 export const entryOf = seq => ix.entries.get(baseOf(seq))
+
+/** The name of a source siglum in a locale. @param {string} siglum @param {string} locale */
+export function siglumName(siglum, locale) {
+  const names = ix.sigla.get(siglum)
+  if (!names) return siglum
+  if (locale === 'zh-Hans') return names.hans
+  if (locale === 'zh-Hant' || locale === 'ja') return names.hant
+  return names.en
+}
 
 /** What a tile says under a character: its reading. @param {string} seq */
 export const readingOf = seq => entryOf(seq)?.reading ?? ''

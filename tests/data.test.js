@@ -2,7 +2,7 @@ import { describe, expect, test, beforeAll } from 'bun:test'
 import { gunzipSync } from 'node:zlib'
 import { readFileSync } from 'node:fs'
 import { fill, ix, radicalNumber } from '../app/lib/index.js'
-import { baseOf, clusters, codePoint, fromParam, lastCluster, readSource, toParam, variantOf } from '../app/lib/script.js'
+import { baseOf, clusters, codePoint, fromParam, isRadical, lastCluster, readSource, toParam, variantOf } from '../app/lib/script.js'
 import { byCode, byCodePoint, byNumber, byReference, jurchenIn, nextLetters } from '../app/lib/search.js'
 import { foldQuery, foldReading, searchReadings } from '../app/lib/reading.js'
 import { buildChart, cellKey, rimeGroup, syllablesOf } from '../app/lib/syllables.js'
@@ -34,6 +34,35 @@ describe('records', () => {
     expect(radicalNumber('\u{191A0}')).toBe(1)
     expect(radicalNumber('\u{191D2}')).toBe(51)
     expect(radicalNumber('\u{18E01}')).toBe(0)
+  })
+})
+
+describe('form sources', () => {
+  test('give every base form and variant its Table 4 sigla and page', () => {
+    expect(ix.formSources.size).toBe(1451)
+    expect(ix.sigla.size).toBe(25)
+    expect(ix.formSources.get('\u{18E01}')).toEqual({ sources: ['J¹', 'J²', 'J³', 'N', 'a', 'j'], page: 23 })
+    expect(ix.formSources.get('\u{18E01}\uFE00')).toEqual({ sources: ['J⁴'], page: 23 })
+    expect(ix.formSources.get('\u{18E0D}\uFE00')).toEqual({ sources: ['b', 'c'], page: 24 })
+    expect(ix.formSources.get('\u{18E34}\uFE02')).toEqual({ sources: ['N'], page: 28 })
+    expect(ix.formSources.get('\u{18EBE}')).toEqual({ sources: [], page: 46 })
+  })
+  test('every form has a source row on a Table 4 page', () => {
+    for (const [sequence, source] of ix.formSources) {
+      expect(ix.codes.has(sequence)).toBe(true)
+      expect(source.page).toBeGreaterThanOrEqual(23)
+      expect(source.page).toBeLessThanOrEqual(136)
+      for (const siglum of source.sources) expect(ix.sigla.has(siglum)).toBe(true)
+    }
+    for (const [base, forms] of ix.forms) {
+      if (isRadical(base)) continue
+      const selectors = forms.map(form => variantOf(form)).sort((a, b) => a - b)
+      expect(selectors).toEqual(selectors.map((_, index) => index))
+      expect(forms.every(form => ix.formSources.has(form))).toBe(true)
+    }
+  })
+  test('name a siglum in each language', () => {
+    expect(ix.sigla.get('N')).toEqual({ hant: '女真字文書（西安碑林，1973年發現）', hans: '女真字文书（西安碑林，1973年发现）', en: "Nǚzhēnzì wénshū, Xi'an Beilin (found 1973)" })
   })
 })
 
