@@ -21,10 +21,10 @@ check its record, and put it into your text.
 - **Transcribe**: the text with the reading of each character under it.
 - **Convert**: text in an older font's Private Use codes, turned into Unicode 18, and back.
 
-The card of a character shows its code points, stroke code, variant forms, reading, numeric value
-and source reference. A numeral's card also gives the Manchu word for the same number, in letters and
-in the Manchu script. The text stays in the browser and copies as text, code points, stroke codes,
-or with every variant put back to its base form.
+The card of a character shows its code points, stroke code, variant forms, reading, numeric value,
+source reference and the source of each glyph form. A numeral's card also gives the Manchu word for
+the same number, in letters and in the Manchu script. The text stays in the browser and copies as
+text, code points, stroke codes, or with every variant put back to its base form.
 
 ## Data
 
@@ -33,6 +33,8 @@ Every source, with what it gives and its terms, is in [`docs/materials.md`](docs
 - `app/data/jurchen.json.gz`, built by `bun run build:data` from
   `data/unicode/JurchenSources-18.0.0.txt`, `data/alari/Alari_jurc.dict.yaml` and
   `data/manchu/numerals.tsv`.
+- `data/variants/sources.tsv` and `sigla.tsv`, the source of every base form and variant, from
+  Table 4 of N5261R, built by `scripts/build_variant_sources.py` from the proposal PDF.
 - `app/data/jurchen-shapes.bin.gz`, pen lines for the drawing pad, built by `bun run build:shapes`.
 - `app/public/fonts/AlariXuwasunJurchen-Regular.woff2`, built by `bun run build:font` from the OFL
   font in `data/alari/`.

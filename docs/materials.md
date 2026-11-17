@@ -23,7 +23,7 @@ Retrieved 2026-11-05 unless noted.
 | Andrew West, [Index to Jin Qizong's dictionary](https://www.babelstone.co.uk/Jurchen/JQZ1984_Index.html) | gloss and page, used to tie Kiyose's figures to code points | used as a lookup, not redistributed | `data/etymology/origins.tsv` |
 
 | [WG2 N5207](https://www.unicode.org/wg2/docs/n5207-Jurchen.pdf), Andrew West, 2023-03-15 | Table 7: X-reference to Zhonghua Ziku PUA and draft code point. Table 6: BabelStone PUA kept as text | cited, not redistributed | `scripts/build_jurchen_encodings.py` |
-| [WG2 N5261R](https://www.unicode.org/L2/L2024/24139-n5261r-jurchen-ideographs.pdf), Andrew West, Sun Bojun and the Zhonghua Ziku project, 2024-06-12 | Table 4: final code point to X-references and Jin 1984 entries, and glyphs from the scan fonts | cited, not redistributed | `scripts/build_jurchen_encodings.py` |
+| [WG2 N5261R](https://www.unicode.org/L2/L2024/24139-n5261r-jurchen-ideographs.pdf), Andrew West, Sun Bojun and the Zhonghua Ziku project, 2024-06-12 | Table 4: final code point to X-references and Jin 1984 entries, glyphs from the scan fonts, and the source sigla of each glyph form | cited, not redistributed | `scripts/build_jurchen_encodings.py`, `scripts/build_variant_sources.py` |
 | [BabelStone Jurchen Berlin, Beijing, Toyo Bunko, Tianyige](https://www.babelstone.co.uk/Fonts/JurchenScan.html), Andrew West | the glyph at each Private Use code point, to read Table 4's images | downloaded at build time, not redistributed | `scripts/build_jurchen_encodings.py` |
 
 SHA-256 of the files as downloaded:
@@ -49,6 +49,13 @@ Variant sequences: `StandardizedVariants.txt` of Unicode 18.0 has no Jurchen ent
 the core specification does not mention them. The sequences here are Alari's convention. In the font,
 each of the 537 agrees with the matching style set (`ss01`–`ss05`); this was checked on the font's own
 tables.
+
+Each form's source sigla come from Table 4 of N5261R, whose glyph column and source column run in the
+same order as the base form and VS1–VS5. The 914 base forms and 537 variants match its 1,451 glyph
+forms one for one. `data/variants/sources.tsv` records the sigla and the PDF page of each form;
+`data/variants/sigla.tsv` gives each siglum's name. The images themselves are not copied: each card
+links to the Table 4 page that prints them. U+18EBE has no siglum in Table 4; note 14 there describes
+it as occurring on two Jin bronze mirrors.
 
 ## Manchu numerals
 

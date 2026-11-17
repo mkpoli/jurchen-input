@@ -143,10 +143,13 @@ await step('card: forms, source and number of a character', async () => {
   await page.goto(`${SITE}/?c=18E01`, { waitUntil: 'networkidle' })
   const card = await page.locator('aside.card').innerText()
   for (const expected of ['U+18E01', 'tumən', '10,000', 'Jin Qizong 1984', 'hpz', '2 forms', 'X-0668', 'U+E004', 'U+F2134', '18E03']) assert.ok(card.toLowerCase().includes(expected.toLowerCase()), `${expected} is missing from: ${card}`)
+  const sources = await page.locator('aside.card .form-sources').innerText()
+  for (const expected of ['J¹', 'N', 'Table 4, p. 23']) assert.ok(sources.includes(expected), `${expected} is missing from the form sources: ${sources}`)
   await page.screenshot({ path: join(SHOTS, 'flow-card.png') })
   await page.locator('aside.card .ui-tile').nth(1).click()
   assert.match(page.url(), /c=18E01-FE00/)
   assert.match(await page.locator('aside.card .cp').innerText(), /U\+18E01 U\+FE00/)
+  assert.match(await page.locator('aside.card .form-sources tr[data-open]').innerText(), /J⁴/)
 })
 
 await step('reading: plain letters find phonetic readings', async () => {

@@ -1,6 +1,8 @@
 <script>
   // Where every record on the site comes from, and how each finder treats it.
-  import { t } from '../lib/i18n.svelte.js'
+  import { db } from '../lib/db.svelte.js'
+  import { ix, siglumName } from '../lib/index.js'
+  import { i18n, t } from '../lib/i18n.svelte.js'
   import { MARK } from '../lib/script.js'
 </script>
 
@@ -32,6 +34,21 @@
       <dt>{t('about.missingTitle')}</dt>
       <dd>{t('about.missing')}</dd>
     </dl>
+  </section>
+
+  <section class="ui-section">
+    <h2 class="about-heading">{t('about.siglaTitle')}</h2>
+    <p class="ui-prose">{t('about.sigla')}</p>
+    {#if db.status === 'ready'}
+      <table class="sigla">
+        <tbody>
+          {#each [...ix.sigla] as [siglum, names] (siglum)}
+            <tr><th scope="row">{siglum}</th><td>{siglumName(siglum, i18n.locale)}</td></tr>
+          {/each}
+        </tbody>
+      </table>
+      <p class="ui-hint"><a href="https://www.unicode.org/L2/L2024/24139-n5261r-jurchen-ideographs.pdf#page=23">{t('about.siglaTable')}</a></p>
+    {/if}
   </section>
 
   <section class="ui-section">
@@ -69,5 +86,9 @@
   dt:first-of-type{padding-top:0;margin-top:0;border-top:0}
   dd{margin:var(--ui-space-2xs) 0 0;color:var(--ui-color-ink-soft);font-size:var(--ui-text-md);line-height:var(--ui-leading-loose)}
   .about :global(.ui-script){font-size:22px;vertical-align:-3px}
+  .sigla{border-collapse:collapse;inline-size:100%;font-size:var(--ui-text-sm)}
+  .sigla tr + tr{border-top:1px solid var(--ui-color-border)}
+  .sigla th{inline-size:3.2em;padding:var(--ui-space-2xs) var(--ui-space-sm) var(--ui-space-2xs) 0;text-align:start;font-family:var(--ui-font-mono);font-weight:var(--ui-weight-semibold);vertical-align:top}
+  .sigla td{padding:var(--ui-space-2xs) 0;color:var(--ui-color-ink-soft)}
   .about-foot{font-size:var(--ui-text-xs);line-height:1.6;border-top:1px solid var(--ui-color-border);padding-top:var(--ui-space-lg)}
 </style>
