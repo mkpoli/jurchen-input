@@ -28,6 +28,10 @@ export const GROUPS = /** @type {const} */ ([
     label: 'nav.group.convert',
     pages: [{ path: 'convert', label: 'nav.convert', hint: 'nav.convert.hint' }],
   },
+  {
+    label: 'nav.group.reference',
+    pages: [{ path: 'khitan', label: 'nav.khitan', hint: 'nav.khitan.hint' }],
+  },
 ])
 
 /** @typedef {typeof PRIMARY | typeof GROUPS[number]['pages'][number]} PageEntry */

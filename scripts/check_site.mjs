@@ -41,7 +41,7 @@ async function step(name, check) {
   }
 }
 
-const PAGES = ['', 'strokes', 'draw', 'radicals?q=31', 'codes', 'reading?q=tumen', 'syllables', 'syllables?q=all', 'transcribe', `convert?q=${encodeURIComponent('\uE3C7\uE004\u{F1C72}\uE6F4\uE0DC')}`, 'about']
+const PAGES = ['', 'strokes', 'draw', 'radicals?q=31', 'codes', 'reading?q=tumen', 'syllables', 'syllables?q=all', 'transcribe', `convert?q=${encodeURIComponent('\uE3C7\uE004\u{F1C72}\uE6F4\uE0DC')}`, 'khitan', 'about']
 const VIEWS = [
   { name: 'desktop', width: 1440, height: 900 },
   { name: 'phone', width: 390, height: 844 },
@@ -246,6 +246,23 @@ await step('codes: a page starts on a code row, and a cell copies its character'
   assert.equal(await characters.locator('.chart .cell').count(), 160)
   assert.equal(await characters.locator('.chart .cell.blank').count(), 14)
   await page.screenshot({ path: join(SHOTS, 'flow-codes.png') })
+})
+
+await step('khitan: the figures load, and the nine cards carry the readings', async () => {
+  await page.goto(`${SITE}/khitan`, { waitUntil: 'networkidle' })
+  await page.evaluate(() => document.fonts.ready)
+  assert.equal(await page.locator('aside.card').count(), 0, 'the comparison keeps the card column out')
+  await page.locator('.plate.narrow').scrollIntoViewIfNeeded()
+  await page.waitForFunction(() => [...document.images]
+    .filter(image => image.src.includes('/figures/'))
+    .every(image => image.complete && image.naturalWidth > 0))
+  const figures = await page.evaluate(() => [...document.images]
+    .filter(image => image.src.includes('/figures/'))
+    .map(image => ({ src: image.getAttribute('src'), width: image.naturalWidth })))
+  assert.deepEqual(figures.map(figure => figure.width > 0), [true, true], JSON.stringify(figures))
+  assert.equal(await page.locator('.nine .tile').count(), 9)
+  assert.equal(await page.locator('.nine .tile .reading').first().textContent(), 'abxa')
+  assert.equal(await page.locator('.directions li').count(), 4)
 })
 
 await step('radicals: choosing one lists its characters', async () => {

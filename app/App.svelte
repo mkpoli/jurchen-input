@@ -23,6 +23,7 @@
   import Reading from './pages/Reading.svelte'
   import Draw from './pages/Draw.svelte'
   import Transcribe from './pages/Transcribe.svelte'
+  import Khitan from './pages/Khitan.svelte'
   import About from './pages/About.svelte'
 
   load()
@@ -32,7 +33,7 @@
   // whatever the reader had closed.
   const reloaded = /** @type {PerformanceNavigationTiming | undefined} */ (performance.getEntriesByType('navigation')[0])?.type === 'reload'
   if (route.c && route.page === '' && !route.q && !reloaded && matchMedia('(max-width: 900px)').matches) ui.sheet = true
-  const full = $derived(route.page === 'about' || route.page === 'codes')
+  const full = $derived(route.page === 'about' || route.page === 'codes' || route.page === 'khitan')
 
   /** @type {HTMLElement | null} */
   let settingsTrigger = $state(null)
@@ -46,7 +47,7 @@
   /** The phone's tab strip, scrolled to keep the current finder in view. @type {HTMLElement | null} */
   let tabs = $state(null)
   /** On a phone the strip holds the four finders a reader starts from; the rest wait in a sheet. */
-  const EXTRAS = new Set(['radicals', 'codes', 'syllables', 'transcribe', 'convert'])
+  const EXTRAS = new Set(['radicals', 'codes', 'syllables', 'transcribe', 'convert', 'khitan'])
   let menu = $state(false)
   /** @type {HTMLDialogElement | null} */
   let sheet = $state(null)
@@ -197,8 +198,9 @@
         {:else if route.page === 'codes'}<Codes />
         {:else if route.page === 'convert'}<Convert />
         {:else if route.page === 'syllables'}<Syllables />
+        {:else if route.page === 'khitan'}<Khitan />
         {:else}<About />{/if}
-        {#if route.page !== 'about'}
+        {#if route.page !== 'about' && route.page !== 'khitan'}
           <footer class="foot ui-hint">
             †
             <a href="/about" title={t('nav.sources.hint')} onclick={event => nav(event, 'about')}>{t('nav.sources')}</a>
