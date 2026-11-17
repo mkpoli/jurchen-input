@@ -17,6 +17,7 @@ import argparse
 import html
 import re
 import subprocess
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -35,8 +36,12 @@ def words(page, path):
 
 def images(page, path):
     """Glyph images in the Glyphs column, as (top, left) in PDF points."""
-    text = subprocess.run(['pdftohtml', '-f', str(page), '-l', str(page), '-xml', '-hidden', '-stdout', str(path)],
-                          check=True, capture_output=True, text=True).stdout
+    # pdftohtml writes the page's images beside the output file even with -stdout. Keep them in a
+    # temporary directory so a read-only proposal directory is enough to read the PDF.
+    with tempfile.TemporaryDirectory() as temp:
+        prefix = Path(temp) / f'page-{page}'
+        text = subprocess.run(['pdftohtml', '-f', str(page), '-l', str(page), '-xml', '-hidden', '-stdout',
+                               str(path), str(prefix)], check=True, capture_output=True, text=True).stdout
     found = []
     for top, left, width, height in re.findall(
             r'<image top="([\d.]+)" left="([\d.]+)" width="([\d.]+)" height="([\d.]+)"', text):
