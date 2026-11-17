@@ -33,8 +33,8 @@ Every source, with what it gives and its terms, is in [`docs/materials.md`](docs
 - `app/data/jurchen.json.gz`, built by `bun run build:data` from
   `data/unicode/JurchenSources-18.0.0.txt`, `data/alari/Alari_jurc.dict.yaml` and
   `data/manchu/numerals.tsv`.
-- `data/variants/sources.tsv` and `sigla.tsv`, the source of every base form and variant, from
-  Table 4 of N5261R, built by `scripts/build_variant_sources.py` from the proposal PDF.
+- `data/variants/sources.tsv`, the source of every base form and variant, from Table 4 of N5261R,
+  built by `scripts/build_variant_sources.py` from the proposal PDF. `sigla.tsv` names the sigla.
 - `app/data/jurchen-shapes.bin.gz`, pen lines for the drawing pad, built by `bun run build:shapes`.
 - `app/public/fonts/AlariXuwasunJurchen-Regular.woff2`, built by `bun run build:font` from the OFL
   font in `data/alari/`.

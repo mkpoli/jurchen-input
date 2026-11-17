@@ -17,12 +17,12 @@ import argparse
 import html
 import re
 import subprocess
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'data/variants/sources.tsv'
 SIGLA = ROOT / 'data/variants/sigla.tsv'
-SUPERSCRIPT = '¹²³⁴⁵'
 
 
 def words(page, path):
@@ -35,8 +35,12 @@ def words(page, path):
 
 def images(page, path):
     """Glyph images in the Glyphs column, as (top, left) in PDF points."""
-    text = subprocess.run(['pdftohtml', '-f', str(page), '-l', str(page), '-xml', '-hidden', '-stdout', str(path)],
-                          check=True, capture_output=True, text=True).stdout
+    # pdftohtml writes the page's images beside the output file even with -stdout. Keep them in a
+    # temporary directory so a read-only proposal directory is enough to read the PDF.
+    with tempfile.TemporaryDirectory() as temp:
+        prefix = Path(temp) / f'page-{page}'
+        text = subprocess.run(['pdftohtml', '-f', str(page), '-l', str(page), '-xml', '-hidden', '-stdout',
+                               str(path), str(prefix)], check=True, capture_output=True, text=True).stdout
     found = []
     for top, left, width, height in re.findall(
             r'<image top="([\d.]+)" left="([\d.]+)" width="([\d.]+)" height="([\d.]+)"', text):
@@ -76,8 +80,8 @@ def table_rows(path):
                 continue  # a code in a footnote, not a table row
             start, stop = forms[0] - 5, min(forms[-1] + 26, end - 14, 556)
             lines = []
-            for xx, yy, _x1, _y1, text in sorted((x, y, x1, y1, t) for x, y, x1, y1, t in word_list
-                                                if source_x - 3 < x < source_x + 60 and start < y < stop):
+            for yy, xx, text in sorted((y, x, t) for x, y, _x1, _y1, t in word_list
+                                       if source_x - 3 < x < berlin_x - 3 and start < y < stop):
                 if lines and abs(lines[-1][0] - yy) < 2:
                     lines[-1][1].append((xx, text))
                 else:
