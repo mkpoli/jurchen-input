@@ -42,6 +42,10 @@ export const PAGE_SEO = {
     title: 'Convert — Jurchen Input',
     description: 'Turn Jurchen text in the Private Use codes of older fonts into Unicode 18, and back, using tables drawn from the encoding proposals.',
   },
+  khitan: {
+    title: 'Khitan and Jurchen — Jurchen Input',
+    description: 'Nine Jurchen characters set beside their Khitan large script forms, and what the sources say of the four directions.',
+  },
   about: {
     title: 'Sources — Jurchen Input',
     description: 'Where every record on Jurchen Input comes from: Unicode 18.0’s JurchenSources.txt and Alari’s font and stroke table.',
