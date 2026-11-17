@@ -85,7 +85,7 @@ def table_rows(path):
             groups = [[] for _ in forms]
             for yy, parts in lines:
                 nearest = min(range(len(forms)), key=lambda i: abs(forms[i] - yy))
-                if abs(forms[nearest] - yy) > 20:
+                if abs(forms[nearest] - yy) > 15:
                     raise SystemExit(f'{code} on p. {page}: source line {yy:.1f} is far from every form')
                 groups[nearest].append(' '.join(text for _x, text in sorted(parts)))
             rows[code] = (page, [' '.join(group) for group in groups])
