@@ -63,11 +63,17 @@ def table_rows(path):
     rows = {}
     for page in range(1, page_count + 1):
         word_list = words(page, path)
-        headers = {t: (x, y) for x, y, _x1, _y1, t in word_list}
-        if 'Sources' not in headers or 'Berlin' not in headers or 'Glyphs' not in headers:
+        # A footnote can repeat a header word; the table header is the topmost row that names the
+        # columns.
+        header_y = min((y for _x, y, _x1, _y1, t in word_list if t in ('Sources', 'Glyphs', 'Berlin')),
+                       default=None)
+        if header_y is None:
             continue
-        source_x, source_y = headers['Sources']
-        berlin_x = headers['Berlin'][0]
+        source_x = next((x for x, y, _x1, _y1, t in word_list if t == 'Sources' and abs(y - header_y) < 2), None)
+        berlin_x = next((x for x, y, _x1, _y1, t in word_list if t == 'Berlin' and abs(y - header_y) < 2), None)
+        if source_x is None or berlin_x is None:
+            continue
+        source_y = header_y
         codes = sorted((y, t) for x, y, _x1, _y1, t in word_list
                        if re.fullmatch(r'(18[EF]|19[01])[0-9A-F]{2}', t) and x < source_x - 5 and source_y < y < 560)
         if not codes:

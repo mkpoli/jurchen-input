@@ -51,6 +51,8 @@ describe('form sources', () => {
     expect(ix.formSources.get('\u{18E07}')).toEqual({ sources: ['J¹', 'J⁴', 'L¹', 'L²', 'M', 'a', 'b', 'h', 'j'], page: 23 })
     expect(ix.formSources.get('\u{18EC8}')).toEqual({ sources: ['J¹', 'J²', 'J³', 'J⁴', 'L¹', 'L²', 'N', 'P', 'a', 'b', 'c', 'd', 'e', 'i', 'j'], page: 47 })
     expect(ix.formSources.get('\u{1915E}')).toEqual({ sources: ['J¹', 'J²', 'J³', 'J⁴', 'L¹', 'L²', 'N', 'P', 'a', 'b', 'c', 'f', 'j'], page: 130 })
+    expect(ix.formSources.get('\u{190B4}')).toEqual({ sources: ['J¹', 'J⁴', 'L¹', 'L²', 'N', 'c', 'h'], page: 110 })
+    expect(ix.formSources.get('\u{190B5}')).toEqual({ sources: ['J¹', 'J²', 'J⁴', 'L¹', 'L²', 'a', 'b', 'c', 'i'], page: 110 })
     expect(ix.formSources.get('\u{18EBE}')).toEqual({ sources: [], page: 46 })
   })
   test('every form has a source row on a Table 4 page', () => {
