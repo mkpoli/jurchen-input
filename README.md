@@ -76,6 +76,8 @@ The tables, and how each link was made, are in `data/encodings/` and [`docs/mate
 
 ## Development
 
+The [family guide to checkboxes, radios and switches](https://github.com/mkpoli/tangut-input/blob/main/design/README.md#which-control) gives the markup for the controls in this app’s [design stylesheets](design/).
+
 ```sh
 bun install
 bun run dev        # the site
