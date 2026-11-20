@@ -1,6 +1,7 @@
 // What each page says about itself outside the page: the title a tab and a search result show, the
-// one-line description under it, and the address the page answers at, kept in step when a reader
-// moves between finders without a page load.
+// one-line description under it, and the address the page answers at. The worker reads this to
+// answer a crawler without running the app, and the app reads it to keep the head in step when a
+// reader moves between finders without a page load.
 
 export const SITE = { name: 'Jurchen Input', url: 'https://jurchen.mkpo.li' }
 
@@ -50,6 +51,16 @@ export const PAGE_SEO = {
     title: 'Sources — Jurchen Input',
     description: 'Where every record on Jurchen Input comes from: Unicode 18.0’s JurchenSources.txt and Alari’s font and stroke table.',
   },
+}
+
+/**
+ * The page a pathname names, or null when no page answers there. A trailing slash is the same page.
+ * @param {string} path a pathname
+ * @returns {string | null}
+ */
+export function pageOf(path) {
+  const clean = path.replace(/^\/+|\/+$/g, '')
+  return Object.hasOwn(PAGE_SEO, clean) ? clean : null
 }
 
 /** The title, description and canonical address of a page. @param {string} page */
