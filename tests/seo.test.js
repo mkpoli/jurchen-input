@@ -43,7 +43,7 @@ describe('page SEO', () => {
       remove() { const i = nodes.indexOf(node); if (i >= 0) nodes.splice(i, 1) },
     })
     const prev = globalThis.document
-    /** @type {any} */ (globalThis).document = {
+    const doc = /** @type {any} */ ({
       title: '',
       createElement: (/** @type {string} */ tag) => { const n = { tag, attrs: {} }; return Object.assign(wrap(n), { _node: n }) },
       head: {
@@ -54,14 +54,15 @@ describe('page SEO', () => {
         },
         appendChild(/** @type {{ _node: { tag: string, attrs: Record<string, string> } }} */ el) { nodes.push(el._node) },
       },
-    }
+    })
+    Object.defineProperty(globalThis, 'document', { value: doc, configurable: true, writable: true })
     try {
       applySeo('radicals')
       expect(nodes.some(n => n.attrs.name === 'robots')).toBe(false)
       expect(nodes.find(n => n.attrs.rel === 'canonical')?.attrs.href).toBe('https://jurchen.mkpo.li/radicals')
       expect(nodes.find(n => n.attrs.property === 'og:url')?.attrs.content).toBe('https://jurchen.mkpo.li/radicals')
     } finally {
-      /** @type {any} */ (globalThis).document = prev
+      Object.defineProperty(globalThis, 'document', { value: prev, configurable: true, writable: true })
     }
   })
 })
