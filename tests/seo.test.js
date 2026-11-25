@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
-import { PAGE_SEO, SITE, pageOf, seoOf } from '../app/lib/seo.js'
+import { PAGE_SEO, SITE, applySeo, pageOf, seoOf } from '../app/lib/seo.js'
 
 const read = (/** @type {string} */ path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8')
 
@@ -29,6 +29,40 @@ describe('page SEO', () => {
     for (const page of Object.keys(PAGE_SEO)) {
       expect(first.has(`/${page}`), `/${page}`).toBe(true)
       if (page) expect(first.has(`/${page}/`), `/${page}/`).toBe(true)
+    }
+  })
+  test('restores canonical and og:url and clears noindex after navigating from a 404', () => {
+    const nodes = [
+      { tag: 'meta', attrs: { name: 'robots', content: 'noindex, nofollow' } },
+      { tag: 'meta', attrs: { name: 'description', content: '' } },
+      { tag: 'meta', attrs: { property: 'og:title', content: '' } },
+      { tag: 'meta', attrs: { property: 'og:description', content: '' } },
+    ]
+    const wrap = (/** @type {{ tag: string, attrs: Record<string, string> }} */ node) => ({
+      setAttribute(/** @type {string} */ k, /** @type {string} */ v) { node.attrs[k] = v },
+      remove() { const i = nodes.indexOf(node); if (i >= 0) nodes.splice(i, 1) },
+    })
+    const prev = globalThis.document
+    const doc = /** @type {any} */ ({
+      title: '',
+      createElement: (/** @type {string} */ tag) => { const n = { tag, attrs: {} }; return Object.assign(wrap(n), { _node: n }) },
+      head: {
+        querySelector(/** @type {string} */ sel) {
+          const m = /^(meta|link)\[(\w+)="([^"]+)"\]$/.exec(sel)
+          const found = m && nodes.find(n => n.tag === m[1] && n.attrs[m[2]] === m[3])
+          return found ? wrap(found) : null
+        },
+        appendChild(/** @type {{ _node: { tag: string, attrs: Record<string, string> } }} */ el) { nodes.push(el._node) },
+      },
+    })
+    Object.defineProperty(globalThis, 'document', { value: doc, configurable: true, writable: true })
+    try {
+      applySeo('radicals')
+      expect(nodes.some(n => n.attrs.name === 'robots')).toBe(false)
+      expect(nodes.find(n => n.attrs.rel === 'canonical')?.attrs.href).toBe('https://jurchen.mkpo.li/radicals')
+      expect(nodes.find(n => n.attrs.property === 'og:url')?.attrs.content).toBe('https://jurchen.mkpo.li/radicals')
+    } finally {
+      Object.defineProperty(globalThis, 'document', { value: prev, configurable: true, writable: true })
     }
   })
 })
