@@ -23,6 +23,14 @@ describe('page SEO', () => {
     const routes = [...read('app/lib/route.svelte.js').matchAll(/path: '([a-z]*)'/g)].map(match => match[1])
     expect(new Set(Object.keys(PAGE_SEO))).toEqual(new Set([...routes, 'about']))
   })
+  test('runs the worker first for every page path so navigations get its head', () => {
+    const config = JSON.parse(read('wrangler.jsonc').replace(/^\s*\/\/.*$/gm, ''))
+    const first = new Set(config.assets.run_worker_first)
+    for (const page of Object.keys(PAGE_SEO)) {
+      expect(first.has(`/${page}`), `/${page}`).toBe(true)
+      if (page) expect(first.has(`/${page}/`), `/${page}/`).toBe(true)
+    }
+  })
 })
 
 describe('served head', () => {
