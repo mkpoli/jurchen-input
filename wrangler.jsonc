@@ -6,6 +6,19 @@
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
+    "run_worker_first": [
+      "/",
+      "/strokes", "/strokes/",
+      "/draw", "/draw/",
+      "/radicals", "/radicals/",
+      "/codes", "/codes/",
+      "/reading", "/reading/",
+      "/syllables", "/syllables/",
+      "/transcribe", "/transcribe/",
+      "/convert", "/convert/",
+      "/khitan", "/khitan/",
+      "/about", "/about/"
+    ],
     "not_found_handling": "none"
   },
   "routes": [{ "pattern": "jurchen.mkpo.li", "custom_domain": true }],

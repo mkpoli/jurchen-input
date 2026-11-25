@@ -65,7 +65,7 @@ export function pageOf(path) {
 
 /** The title, description and canonical address of a page. @param {string} page */
 export function seoOf(page) {
-  const entry = PAGE_SEO[page] ?? PAGE_SEO['']
+  const entry = Object.hasOwn(PAGE_SEO, page) ? PAGE_SEO[page] : PAGE_SEO['']
   return { ...entry, url: `${SITE.url}/${page}` }
 }
 
